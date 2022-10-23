@@ -29,6 +29,6 @@ public class CustomerRequestDto {
 
 
     public Customer toEntity(){
-        return Customer.SaveCustomer(custNo, email, password, name);
+        return Customer.SaveCustomer(email, password, name);
     }
 }

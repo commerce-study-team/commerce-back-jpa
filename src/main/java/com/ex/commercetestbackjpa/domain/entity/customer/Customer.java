@@ -28,16 +28,15 @@ public class Customer extends BaseEntity {
     // CreatedBy, LastModifiedBy 추후에 추가
 
     // private으로 외부에서 생성자 못쓰게 막음
-    private Customer(Long custNo, String userId, String password, String name) {
-        this.custNo = custNo;
+    private Customer(String userId, String password, String name) {
         this.email = userId;
         this.password = password;
         this.name = name;
     }
 
     // Customer Entity 직접 생성을 막기위해 static으로 함수를 만들어두고 RequestDto 안에서 이쪽을 호출해 우회 생성되도록 함
-    public static Customer SaveCustomer(Long custNo, String email, String password, String name){
-        return new Customer(custNo, email, password, name);
+    public static Customer SaveCustomer(String email, String password, String name){
+        return new Customer(email, password, name);
     }
 
     // 수정을 허용할 컬럼만 분리해서 함수생성
