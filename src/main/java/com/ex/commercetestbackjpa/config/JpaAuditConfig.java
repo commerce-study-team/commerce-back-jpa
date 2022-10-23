@@ -13,7 +13,7 @@ public class JpaAuditConfig implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String userId = request.getHeader("uid"); // 로그인 방식에 따라 변경해줘야함 일단은 헤더정보가지고 테스트만 해보기
+        String userId = "999999"; // 로그인 방식에 따라 변경해줘야함 일단은 "999999"
         return Optional.of(userId);
     }
 }
