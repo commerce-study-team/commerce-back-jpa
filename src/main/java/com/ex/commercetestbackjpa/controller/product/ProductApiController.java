@@ -24,10 +24,12 @@ public class ProductApiController {
     }
 
     @GetMapping("/{productNo}")
-    public ProductResponseDto findProduct (@PathVariable Long productNo) {
+    public ProductResponseDto findProductByProduct (@PathVariable Long productNo) {
         return productService.findProductByProductNo(productNo);
     }
 
-
-
+    @GetMapping("")
+    public HashMap<String, Object> findProductAll () {
+        return productService.findProductAll();
+    }
 }

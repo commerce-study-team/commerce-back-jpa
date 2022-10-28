@@ -1,7 +1,15 @@
 package com.ex.commercetestbackjpa.domain.entity.product.dto;
 
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Data
 public class ProductResponseDto {
 
     private Long productNo;

@@ -57,11 +57,4 @@ public class Product extends BaseEntity {
     public static Product SaveProduct (String productName, String lgroup, String mgroup, String sgroup, String keyword) {
         return new Product (productName, lgroup, mgroup, sgroup, keyword);
     }
-
-
-
-
-
-
-
 }

@@ -8,8 +8,10 @@ import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -26,5 +28,16 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productNo).orElseThrow(NoSuchElementException::new);
 
         return new ProductResponseDto(product);
+    }
+
+    @Override
+    public HashMap<String, Object> findProductAll() {
+        HashMap<String, Object> resultMap = new HashMap<>();
+
+        List<ProductResponseDto> list = productRepository.findAll().stream().map(ProductResponseDto::new).collect(Collectors.toList());
+        resultMap.put("RESULT", list);
+
+        return resultMap;
+
     }
 }
