@@ -1,12 +1,15 @@
 package com.ex.commercetestbackjpa.domain.entity.product;
 
 import com.ex.commercetestbackjpa.domain.base.BaseEntity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name="tproduct")
 @Getter
@@ -45,6 +48,10 @@ public class Product extends BaseEntity {
     @ColumnDefault("0")
     private long commentCount;
 
+    @OneToMany(mappedBy = "product")
+    private List<ProductDT> productDtList = new ArrayList<>();
+
+    @Builder
     public Product (String productName, String lgroup, String mgroup, String sgroup, String keyword) {
 
         this.productName = productName;
@@ -52,9 +59,5 @@ public class Product extends BaseEntity {
         this.mgroup = mgroup;
         this.sgroup = sgroup;
         this.keyword = keyword;
-    }
-
-    public static Product SaveProduct (String productName, String lgroup, String mgroup, String sgroup, String keyword) {
-        return new Product (productName, lgroup, mgroup, sgroup, keyword);
     }
 }

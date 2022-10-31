@@ -1,20 +1,13 @@
-package com.ex.commercetestbackjpa.domain.entity.product.dto;
+package com.ex.commercetestbackjpa.domain.dto.product;
 
-import com.ex.commercetestbackjpa.domain.entity.customer.Customer;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Data
+@Getter
+@Setter
 public class ProductRequestDto {
 
     private Long productNo;
@@ -36,7 +29,16 @@ public class ProductRequestDto {
     @NotBlank(message = "검색어는 필수 입력값입니다.")
     private String keyword;
 
-    public Product toEntity(){
-        return Product.SaveProduct(productName, lgroup, mgroup, sgroup, keyword);
+    private List<ProductDTRequestDto> productDtRequestDtos;
+
+    public Product toEntity() {
+
+        return Product.builder()
+               .productName(this.productName)
+               .lgroup(this.lgroup)
+               .mgroup(this.mgroup)
+               .sgroup(this.sgroup)
+               .keyword(this.keyword)
+               .build();
     }
 }

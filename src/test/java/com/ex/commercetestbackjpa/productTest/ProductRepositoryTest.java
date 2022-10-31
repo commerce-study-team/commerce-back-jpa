@@ -1,12 +1,11 @@
 package com.ex.commercetestbackjpa.productTest;
 
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
-import com.ex.commercetestbackjpa.domain.entity.product.dto.ProductRequestDto;
+import com.ex.commercetestbackjpa.domain.dto.product.ProductRequestDto;
 import com.ex.commercetestbackjpa.repository.product.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 
