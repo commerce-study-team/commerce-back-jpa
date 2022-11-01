@@ -19,7 +19,7 @@ public class ProductDT {
     private Long productDtNo;
 
     @Column(length = 100)
-    @ColumnDefault("단품기본")
+    @ColumnDefault("'base'")
     private String productDtName;
 
     @Column(length = 2)
@@ -27,7 +27,7 @@ public class ProductDT {
     private String colorCode;
 
     @Column(length = 100)
-    @ColumnDefault("기본")
+    @ColumnDefault("'base'")
     private String colorName;
 
     @Column(length = 2)
@@ -35,7 +35,7 @@ public class ProductDT {
     private String sizeCode;
 
     @Column(length = 100)
-    @ColumnDefault("기본")
+    @ColumnDefault("'base'")
     private String sizeName;
 
     @Column(nullable = false, length = 2)
