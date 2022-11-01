@@ -29,7 +29,11 @@ public class ProductRequestDto {
     @NotBlank(message = "검색어는 필수 입력값입니다.")
     private String keyword;
 
+    // 단품 정보 DTO
     private List<ProductDTRequestDto> productDtRequestDtos;
+
+    // 가격 정보 DTO
+    private List<ProductPriceRequestDto> productPriceRequestDtos;
 
     public Product toEntity() {
 

@@ -18,10 +18,10 @@ import java.util.List;
 public class Product extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="product_no")
+    @Column(length = 10)
     private Long productNo;
 
-    @Column(name="product_name", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String productName;
 
     @Column(nullable = false, length = 2)
@@ -33,26 +33,29 @@ public class Product extends BaseEntity {
     @Column(nullable = false, length = 2)
     private String sgroup;
 
-    @Column(name="sale_flag", nullable = false, length = 2)
+    @Column(nullable = false, length = 2)
     @ColumnDefault("00")
     private String saleFlag;
 
     @Column(nullable = false, length = 500)
     private String keyword;
 
-    @Column(name="max_buy", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     @ColumnDefault("0")
     private int maxBuy;
 
-    @Column(name="comment_count", nullable = false)
+    @Column(nullable = false)
     @ColumnDefault("0")
     private long commentCount;
 
     @OneToMany(mappedBy = "product")
     private List<ProductDT> productDtList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product")
+    private List<ProductPrice> productPriceList = new ArrayList<>();
+
     @Builder
-    public Product (String productName, String lgroup, String mgroup, String sgroup, String keyword) {
+    private Product (String productName, String lgroup, String mgroup, String sgroup, String keyword) {
 
         this.productName = productName;
         this.lgroup = lgroup;

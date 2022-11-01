@@ -1,4 +1,4 @@
-package com.ex.commercetestbackjpa.productTest;
+package com.ex.commercetestbackjpa.productTest.repository;
 
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductRequestDto;
