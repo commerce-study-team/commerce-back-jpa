@@ -49,7 +49,7 @@ public class ProductService {
     public ProductResponseDto findProductByProductNo(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(NoSuchElementException::new);
 
-        return new ProductResponseDto();
+        return new ProductResponseDto(product);
     }
 
     public HashMap<String, Object> findProductAll() {

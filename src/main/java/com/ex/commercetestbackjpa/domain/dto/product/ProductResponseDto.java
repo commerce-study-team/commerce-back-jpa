@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -22,6 +24,10 @@ public class ProductResponseDto {
     private String keyword;
     private int maxBuy;
     private long commentCount;
+
+    private List<ProductDtResponseDto> productDtResponseDtoList;
+
+    private List<ProductPriceResponseDto> productPriceResponseDtoList;
 
     public ProductResponseDto (Product product) {
         this.productNo = product.getProductNo();

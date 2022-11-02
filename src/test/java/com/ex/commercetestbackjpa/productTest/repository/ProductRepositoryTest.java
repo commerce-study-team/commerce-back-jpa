@@ -3,6 +3,7 @@ package com.ex.commercetestbackjpa.productTest.repository;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductRequestDto;
 import com.ex.commercetestbackjpa.repository.product.ProductRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,10 +28,11 @@ public class ProductRepositoryTest {
 
         productRepository.save(productRequestDto.toEntity());
     }
-
+    @Test
     public void findProductByProductNo() {
 
-        Optional<Product> product = productRepository.findById(1L);
+        Product product = productRepository.findById(1L).stream().findAny().get();
+
     }
 
 
