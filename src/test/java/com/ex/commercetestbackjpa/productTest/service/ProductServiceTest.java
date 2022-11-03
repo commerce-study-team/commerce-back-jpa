@@ -3,21 +3,25 @@ package com.ex.commercetestbackjpa.productTest.service;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductDTRequestDto;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductPriceRequestDto;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductRequestDto;
+import com.ex.commercetestbackjpa.domain.dto.product.ProductResponseDto;
+import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 public class ProductServiceTest {
 
     @Autowired
-    ProductService ProductService;
+    ProductService productService;
 
     @Test
     public void saveProductTest() {
@@ -74,7 +78,22 @@ public class ProductServiceTest {
         productRequestDto.setProductDtRequestDtos(productDTRequestDtoList);
         productRequestDto.setProductPriceRequestDtos(productPriceRequestDtoList);
 
-        ProductService.saveProduct(productRequestDto);
+        productService.saveProduct(productRequestDto);
     }
+
+    @Test
+    void 상품명검색() {
+        Map<String, Object> map = productService.findProductByProductName("테스트 상품");
+
+        List<ProductResponseDto> list = (List<ProductResponseDto>) map.get("RESULT");
+
+        for(ProductResponseDto pr : list) {
+            System.out.println(pr.getSaleFlag());
+        }
+
+
+        //assertThat(list.get(0).getProductName()).isEqualTo("테스트 상품");
+    }
+
 
 }

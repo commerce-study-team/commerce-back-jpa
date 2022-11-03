@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,14 @@ public class ProductService {
         Product product = productRepository.findById(productNo).orElseThrow(NoSuchElementException::new);
 
         return new ProductResponseDto(product);
+    }
+
+    public Map<String, Object> findProductByProductName(String productName) {
+        Map<String, Object> result = new HashMap<>();
+        List<ProductResponseDto> list = productRepository.findByProductName(productName).stream().map(ProductResponseDto::new).collect(Collectors.toList());
+
+        result.put("RESULT", list);
+        return result;
     }
 
     public HashMap<String, Object> findProductAll() {
