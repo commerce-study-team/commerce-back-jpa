@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 public class ProductDTRequestDto {
 
+        private Long productDtNo;
         private String productDtName;
 
         private String colorCode;

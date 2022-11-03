@@ -1,10 +1,8 @@
 package com.ex.commercetestbackjpa.service.product;
 
-import com.ex.commercetestbackjpa.domain.dto.product.ProductPriceRequestDto;
+import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
-import com.ex.commercetestbackjpa.domain.dto.product.ProductDTRequestDto;
-import com.ex.commercetestbackjpa.domain.dto.product.ProductRequestDto;
-import com.ex.commercetestbackjpa.domain.dto.product.ProductResponseDto;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
 import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
@@ -47,6 +45,7 @@ public class ProductService {
 
         return productNo;
     }
+
     public ProductResponseDto findProductByProductNo(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(NoSuchElementException::new);
 
@@ -68,6 +67,21 @@ public class ProductService {
         resultMap.put("RESULT", list);
 
         return resultMap;
+    }
 
+    // 단품 색상 변경
+    @Transactional
+    public Long updateProductDtColor(ProductDTRequestDto productDTRequestDto) {
+        ProductDT productDt = productDtRepository.findById(productDTRequestDto.getProductDtNo()).orElseThrow(NoSuchElementException::new);
+
+        productDt.updateColor(productDTRequestDto.getColorCode(), productDTRequestDto.getColorName());
+
+        return 1L;
+    }
+
+    public ProductDtResponseDto findProductDtByProductDtNo(Long productDtNo) {
+        ProductDT productDT = productDtRepository.findById(productDtNo).get();
+
+        return new ProductDtResponseDto(productDT);
     }
 }

@@ -1,10 +1,8 @@
 package com.ex.commercetestbackjpa.productTest.service;
 
-import com.ex.commercetestbackjpa.domain.dto.product.ProductDTRequestDto;
-import com.ex.commercetestbackjpa.domain.dto.product.ProductPriceRequestDto;
-import com.ex.commercetestbackjpa.domain.dto.product.ProductRequestDto;
-import com.ex.commercetestbackjpa.domain.dto.product.ProductResponseDto;
+import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,11 +86,23 @@ public class ProductServiceTest {
         List<ProductResponseDto> list = (List<ProductResponseDto>) map.get("RESULT");
 
         for(ProductResponseDto pr : list) {
-            System.out.println(pr.getSaleFlag());
+            System.out.println(pr.getProductName());
         }
-
-
         //assertThat(list.get(0).getProductName()).isEqualTo("테스트 상품");
+    }
+
+    @Test
+    void 단품색상변경() {
+        ProductDTRequestDto productDTRequestDto = new ProductDTRequestDto();
+        productDTRequestDto.setProductDtNo(1L);
+        productDTRequestDto.setColorCode("20");
+        productDTRequestDto.setColorName("초록");
+
+        productService.updateProductDtColor(productDTRequestDto);
+
+        ProductDtResponseDto  productDtResponseDto = productService.findProductDtByProductDtNo(1L);
+
+        assertThat(productDTRequestDto.getColorCode()).isEqualTo(productDtResponseDto.getColorCode());
     }
 
 

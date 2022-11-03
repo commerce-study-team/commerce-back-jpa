@@ -15,7 +15,6 @@ import java.util.List;
 public class ProductResponseDto {
 
     private Long productNo;
-
     private String productName;
     private String lgroup;
     private String mgroup;
@@ -31,6 +30,7 @@ public class ProductResponseDto {
 
     public ProductResponseDto (Product product) {
         this.productNo = product.getProductNo();
+        this.productName = product.getProductName();
         this.lgroup = product.getLgroup();
         this.mgroup = product.getMgroup();
         this.sgroup = product.getSgroup();
