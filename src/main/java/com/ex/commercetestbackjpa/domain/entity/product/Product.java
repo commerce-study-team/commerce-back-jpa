@@ -4,6 +4,7 @@ import com.ex.commercetestbackjpa.domain.base.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -48,6 +49,7 @@ public class Product extends BaseEntity {
     @ColumnDefault("0")
     private long commentCount;
 
+    @BatchSize(size=10)
     @OneToMany(mappedBy = "product")
     private List<ProductDT> productDtList = new ArrayList<>();
 

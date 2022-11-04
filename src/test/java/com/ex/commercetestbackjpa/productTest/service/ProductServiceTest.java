@@ -3,6 +3,7 @@ package com.ex.commercetestbackjpa.productTest.service;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
+import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class ProductServiceTest {
     ProductService productService;
 
     @Test
-    public void saveProductTest() {
+    public void 상품저장() {
         ProductRequestDto productRequestDto = new ProductRequestDto();
         List<ProductDTRequestDto> productDTRequestDtoList = new ArrayList<>();
         List<ProductPriceRequestDto> productPriceRequestDtoList = new ArrayList<>();
@@ -80,6 +81,18 @@ public class ProductServiceTest {
     }
 
     @Test
+    void 상품조회() {
+        ProductResponseDto productResponseDto = productService.findProductByProductNo(5L);
+        List<ProductDtResponseDto> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
+        List<ProductPriceResponseDto> productPriceResponseDtoList = productResponseDto.getProductPriceResponseDtoList();
+
+        for (ProductDtResponseDto productDtResponseDto : productDtResponseDtoList) {
+            System.out.println(productDtResponseDto.getProductDtName());
+        }
+
+    }
+
+    @Test
     void 상품명검색() {
         Map<String, Object> map = productService.findProductByProductName("테스트 상품");
 
@@ -103,6 +116,20 @@ public class ProductServiceTest {
         ProductDtResponseDto  productDtResponseDto = productService.findProductDtByProductDtNo(1L);
 
         assertThat(productDTRequestDto.getColorCode()).isEqualTo(productDtResponseDto.getColorCode());
+    }
+
+    @Test
+    void 단품크기변경() {
+        ProductDTRequestDto productDTRequestDto = new ProductDTRequestDto();
+        productDTRequestDto.setProductDtNo(1L);
+        productDTRequestDto.setSizeCode("20");
+        productDTRequestDto.setSizeName("소");
+
+        productService.updateProductDtSize(productDTRequestDto);
+
+        ProductDtResponseDto  productDtResponseDto = productService.findProductDtByProductDtNo(1L);
+
+        assertThat(productDTRequestDto.getSizeCode()).isEqualTo(productDtResponseDto.getSizeCode());
     }
 
 

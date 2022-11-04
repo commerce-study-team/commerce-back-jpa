@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,10 +43,30 @@ public class ProductService {
         return productNo;
     }
 
+    @Transactional
     public ProductResponseDto findProductByProductNo(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(NoSuchElementException::new);
+        ProductResponseDto productResponseDto = new ProductResponseDto(product);
+        List<ProductDtResponseDto> productDtResponseDtoList = new ArrayList<>();
+        List<ProductPriceResponseDto> productPriceResponseDtoList = new ArrayList<>();
+        List<ProductDT> productDTList = product.getProductDtList();
+        List<ProductPrice> productPriceList = product.getProductPriceList();
 
-        return new ProductResponseDto(product);
+        // 단품 add
+        for (ProductDT productDT : productDTList) {
+            productDtResponseDtoList.add(new ProductDtResponseDto(productDT));
+        }
+
+        productResponseDto.setProductDtResponseDtoList(productDtResponseDtoList);
+
+        // 가격 add
+        for (ProductPrice productPrice : productPriceList) {
+            productPriceResponseDtoList.add(new ProductPriceResponseDto(productPrice));
+        }
+
+        productResponseDto.setProductPriceResponseDtoList(productPriceResponseDtoList);
+
+        return productResponseDto;
     }
 
     public Map<String, Object> findProductByProductName(String productName) {
@@ -79,9 +96,20 @@ public class ProductService {
         return 1L;
     }
 
+    @Transactional
+    public Long updateProductDtSize(ProductDTRequestDto productDTRequestDto) {
+        ProductDT productDt = productDtRepository.findById(productDTRequestDto.getProductDtNo()).orElseThrow(NoSuchElementException::new);
+
+        productDt.updateSize(productDTRequestDto.getSizeCode(), productDTRequestDto.getSizeName());
+
+        return 1L;
+    }
+
     public ProductDtResponseDto findProductDtByProductDtNo(Long productDtNo) {
         ProductDT productDT = productDtRepository.findById(productDtNo).get();
 
         return new ProductDtResponseDto(productDT);
     }
+
+
 }
