@@ -47,34 +47,51 @@ public class ProductService {
     public ProductResponseDto findProductByProductNo(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(NoSuchElementException::new);
         ProductResponseDto productResponseDto = new ProductResponseDto(product);
+        productResponseDto.setProductDtResponseDtoList(this.addProductDtList(product));
+        productResponseDto.setProductPriceResponseDtoList(this.addProductPriceList(product));
+
+        return productResponseDto;
+    }
+
+    @Transactional
+    public Map<String, Object> findProductByProductName(String productName) {
+        Map<String, Object> result = new HashMap<>();
+        List<Product> productList = productRepository.findByProductName(productName);
+        List<ProductResponseDto> list = new ArrayList<>();
+
+        for(Product product : productList) {
+            ProductResponseDto productResponseDto = new ProductResponseDto(product);
+            productResponseDto.setProductDtResponseDtoList(this.addProductDtList(product));
+            productResponseDto.setProductPriceResponseDtoList(this.addProductPriceList(product));
+            list.add(productResponseDto);
+        }
+
+        result.put("RESULT", list);
+        return result;
+    }
+
+    private List<ProductDtResponseDto> addProductDtList(Product product) {
         List<ProductDtResponseDto> productDtResponseDtoList = new ArrayList<>();
-        List<ProductPriceResponseDto> productPriceResponseDtoList = new ArrayList<>();
         List<ProductDT> productDTList = product.getProductDtList();
-        List<ProductPrice> productPriceList = product.getProductPriceList();
 
         // 단품 add
         for (ProductDT productDT : productDTList) {
             productDtResponseDtoList.add(new ProductDtResponseDto(productDT));
         }
 
-        productResponseDto.setProductDtResponseDtoList(productDtResponseDtoList);
+        return productDtResponseDtoList;
+    }
+
+    private List<ProductPriceResponseDto> addProductPriceList(Product product) {
+        List<ProductPriceResponseDto> productPriceResponseDtoList = new ArrayList<>();
+        List<ProductPrice> productPriceList = product.getProductPriceList();
 
         // 가격 add
         for (ProductPrice productPrice : productPriceList) {
             productPriceResponseDtoList.add(new ProductPriceResponseDto(productPrice));
         }
 
-        productResponseDto.setProductPriceResponseDtoList(productPriceResponseDtoList);
-
-        return productResponseDto;
-    }
-
-    public Map<String, Object> findProductByProductName(String productName) {
-        Map<String, Object> result = new HashMap<>();
-        List<ProductResponseDto> list = productRepository.findByProductName(productName).stream().map(ProductResponseDto::new).collect(Collectors.toList());
-
-        result.put("RESULT", list);
-        return result;
+        return productPriceResponseDtoList;
     }
 
     public HashMap<String, Object> findProductAll() {
@@ -93,7 +110,7 @@ public class ProductService {
 
         productDt.updateColor(productDTRequestDto.getColorCode(), productDTRequestDto.getColorName());
 
-        return 1L;
+        return productDt.getProduct().getProductNo();
     }
 
     @Transactional
@@ -102,7 +119,7 @@ public class ProductService {
 
         productDt.updateSize(productDTRequestDto.getSizeCode(), productDTRequestDto.getSizeName());
 
-        return 1L;
+        return productDt.getProduct().getProductNo();
     }
 
     public ProductDtResponseDto findProductDtByProductDtNo(Long productDtNo) {

@@ -47,12 +47,15 @@ public class ProductPrice {
         this.costPrice = costPrice;
         this.margin = margin;
         this.product = product;
-        this.useYn = true;
     }
 
     public void updateSalePrice(Long salePrice) {
         this.salePrice = salePrice;
         this.margin = salePrice - this.costPrice;
+    }
+
+    public void updateCostPrice(Long costPrice) {
+        this.costPrice = costPrice;
     }
 
     public void updateUseYn(Boolean useYn) {

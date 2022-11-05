@@ -81,14 +81,14 @@ public class ProductServiceTest {
     }
 
     @Test
-    void 상품조회() {
+    void 상품검색() {
         ProductResponseDto productResponseDto = productService.findProductByProductNo(5L);
         List<ProductDtResponseDto> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
         List<ProductPriceResponseDto> productPriceResponseDtoList = productResponseDto.getProductPriceResponseDtoList();
 
-        for (ProductDtResponseDto productDtResponseDto : productDtResponseDtoList) {
-            System.out.println(productDtResponseDto.getProductDtName());
-        }
+        assertThat(productResponseDto.getProductNo()).isNotNull();
+        assertThat(productDtResponseDtoList.get(0).getProductDtNo()).isNotNull();
+        assertThat(productPriceResponseDtoList.get(0).getProductPriceNo()).isNotNull();
 
     }
 
@@ -99,9 +99,10 @@ public class ProductServiceTest {
         List<ProductResponseDto> list = (List<ProductResponseDto>) map.get("RESULT");
 
         for(ProductResponseDto pr : list) {
-            System.out.println(pr.getProductName());
+            assertThat(pr.getProductName()).isEqualTo("테스트 상품");
+            assertThat(pr.getProductDtResponseDtoList().get(0).getProductDtNo()).isNotNull();
+            assertThat(pr.getProductPriceResponseDtoList().get(0).getProductPriceNo()).isNotNull();
         }
-        //assertThat(list.get(0).getProductName()).isEqualTo("테스트 상품");
     }
 
     @Test

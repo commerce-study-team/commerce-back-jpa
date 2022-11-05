@@ -30,9 +30,11 @@ public class ProductRequestDto {
     private String keyword;
 
     // 단품 정보 DTO
+    @NotBlank(message = "단품정보는 필수 입력값입니다.")
     private List<ProductDTRequestDto> productDtRequestDtos;
 
     // 가격 정보 DTO
+    @NotBlank(message = "가격정보는 필수 입력값입니다.")
     private List<ProductPriceRequestDto> productPriceRequestDtos;
 
     public Product toEntity() {

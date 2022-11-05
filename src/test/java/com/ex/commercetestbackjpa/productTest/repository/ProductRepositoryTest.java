@@ -2,16 +2,26 @@ package com.ex.commercetestbackjpa.productTest.repository;
 
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductRequestDto;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
+import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
+import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.NoSuchElementException;
 
 @SpringBootTest
 public class ProductRepositoryTest {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    ProductDtRepository productDtRepository;
+    @Autowired
+    ProductPriceRepository productPriceRepository;
 
     @Test
     public void saveProductTest() {
@@ -27,12 +37,4 @@ public class ProductRepositoryTest {
 
         productRepository.save(productRequestDto.toEntity());
     }
-    @Test
-    public void findProductByProductNo() {
-
-        Product product = productRepository.findById(1L).stream().findAny().get();
-
-    }
-
-
 }

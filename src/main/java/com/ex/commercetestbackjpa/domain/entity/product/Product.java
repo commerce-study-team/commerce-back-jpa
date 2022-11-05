@@ -53,6 +53,7 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     private List<ProductDT> productDtList = new ArrayList<>();
 
+    @BatchSize(size=10)
     @OneToMany(mappedBy = "product")
     private List<ProductPrice> productPriceList = new ArrayList<>();
 
@@ -64,5 +65,23 @@ public class Product extends BaseEntity {
         this.mgroup = mgroup;
         this.sgroup = sgroup;
         this.keyword = keyword;
+    }
+
+    public void updateLMSgroup(String lgroup, String mgroup, String sgroup) {
+        this.lgroup = lgroup;
+        this.mgroup = mgroup;
+        this.sgroup = sgroup;
+    }
+
+    public void updateMaxBuy(int maxBuy) {
+        this.maxBuy = maxBuy;
+    }
+
+    public void updateKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public void updateSaleFlag(String saleFlag) {
+        this.saleFlag = saleFlag;
     }
 }
