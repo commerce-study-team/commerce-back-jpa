@@ -45,7 +45,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto findProductByProductNo(Long productNo) {
-        Product product = productRepository.findById(productNo).orElseThrow(NoSuchElementException::new);
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("조회된 상품이 없습니다."));
         ProductResponseDto productResponseDto = new ProductResponseDto(product);
         productResponseDto.setProductDtResponseDtoList(this.addProductDtList(product));
         productResponseDto.setProductPriceResponseDtoList(this.addProductPriceList(product));
@@ -56,8 +56,8 @@ public class ProductService {
     @Transactional
     public Map<String, Object> findProductByProductName(String productName) {
         Map<String, Object> result = new HashMap<>();
-        List<Product> productList = productRepository.findByProductName(productName);
         List<ProductResponseDto> list = new ArrayList<>();
+        List<Product> productList = productRepository.findByProductName(productName);
 
         for(Product product : productList) {
             ProductResponseDto productResponseDto = new ProductResponseDto(product);
@@ -67,6 +67,24 @@ public class ProductService {
         }
 
         result.put("RESULT", list);
+        return result;
+    }
+
+    @Transactional
+    public HashMap<String, Object> findProductAll() {
+        HashMap<String, Object> result = new HashMap<>();
+        List<ProductResponseDto> list = new ArrayList<>();
+        List<Product> productList = productRepository.findAll();
+
+        for(Product product : productList) {
+            ProductResponseDto productResponseDto = new ProductResponseDto(product);
+            productResponseDto.setProductDtResponseDtoList(this.addProductDtList(product));
+            productResponseDto.setProductPriceResponseDtoList(this.addProductPriceList(product));
+            list.add(productResponseDto);
+        }
+
+        result.put("RESULT", list);
+
         return result;
     }
 
@@ -94,13 +112,12 @@ public class ProductService {
         return productPriceResponseDtoList;
     }
 
-    public HashMap<String, Object> findProductAll() {
-        HashMap<String, Object> resultMap = new HashMap<>();
+    @Transactional
+    public Long saveProductDt(ProductDTRequestDto productDTRequestDto) {
+        Product product = productRepository.findById(productDTRequestDto.getProductNo()).get();
+        ProductDT productDT = productDTRequestDto.toEntity(product);
 
-        List<ProductResponseDto> list = productRepository.findAll().stream().map(ProductResponseDto::new).collect(Collectors.toList());
-        resultMap.put("RESULT", list);
-
-        return resultMap;
+        return productDtRepository.save(productDT).getProductDtNo();
     }
 
     // 단품 색상 변경

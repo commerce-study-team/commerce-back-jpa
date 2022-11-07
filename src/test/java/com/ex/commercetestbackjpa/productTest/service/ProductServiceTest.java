@@ -5,6 +5,7 @@ import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
 import com.ex.commercetestbackjpa.service.product.ProductService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,8 +14,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class ProductServiceTest {
@@ -89,7 +92,11 @@ public class ProductServiceTest {
         assertThat(productResponseDto.getProductNo()).isNotNull();
         assertThat(productDtResponseDtoList.get(0).getProductDtNo()).isNotNull();
         assertThat(productPriceResponseDtoList.get(0).getProductPriceNo()).isNotNull();
+    }
 
+    @Test
+    void 상품검색실패() {
+        assertThrows(NoSuchElementException.class, () -> productService.findProductByProductNo(0L));
     }
 
     @Test
@@ -103,6 +110,21 @@ public class ProductServiceTest {
             assertThat(pr.getProductDtResponseDtoList().get(0).getProductDtNo()).isNotNull();
             assertThat(pr.getProductPriceResponseDtoList().get(0).getProductPriceNo()).isNotNull();
         }
+    }
+
+    @Test
+    void 단품저장() {
+        ProductDTRequestDto productDTRequestDto = new ProductDTRequestDto();
+        productDTRequestDto.setProductNo(1L);
+        productDTRequestDto.setProductDtName("초록붕어빵");
+
+        Long productDtNo = productService.saveProductDt(productDTRequestDto);
+
+        ProductResponseDto productResponseDto = productService.findProductByProductNo(1L);
+        List<ProductDtResponseDto> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
+
+        assertThat(productDtResponseDtoList.size()).isNotZero();
+
     }
 
     @Test
@@ -120,6 +142,16 @@ public class ProductServiceTest {
     }
 
     @Test
+    void 단품색상변경실패() {
+        ProductDTRequestDto productDTRequestDto = new ProductDTRequestDto();
+        productDTRequestDto.setProductDtNo(0L);
+        productDTRequestDto.setColorCode("20");
+        productDTRequestDto.setColorName("초록");
+
+        assertThrows(NoSuchElementException.class, () -> productService.updateProductDtColor(productDTRequestDto));
+    }
+
+    @Test
     void 단품크기변경() {
         ProductDTRequestDto productDTRequestDto = new ProductDTRequestDto();
         productDTRequestDto.setProductDtNo(1L);
@@ -131,6 +163,16 @@ public class ProductServiceTest {
         ProductDtResponseDto  productDtResponseDto = productService.findProductDtByProductDtNo(1L);
 
         assertThat(productDTRequestDto.getSizeCode()).isEqualTo(productDtResponseDto.getSizeCode());
+    }
+
+    @Test
+    void 단품크기변경실패() {
+        ProductDTRequestDto productDTRequestDto = new ProductDTRequestDto();
+        productDTRequestDto.setProductDtNo(1L);
+        productDTRequestDto.setSizeCode("20");
+        productDTRequestDto.setSizeName("소");
+
+        assertThrows(NoSuchElementException.class, () -> productService.updateProductDtSize(productDTRequestDto));
     }
 
 

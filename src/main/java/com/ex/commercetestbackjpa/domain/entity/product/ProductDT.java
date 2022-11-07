@@ -18,27 +18,24 @@ public class ProductDT {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productDtNo;
 
-    @Column(length = 100)
-    @ColumnDefault("'base'")
+    @Column(nullable = false, length = 100)
     private String productDtName;
 
-    @Column(length = 2)
-    @ColumnDefault("10")
+    @Column(nullable = false, length = 2)
     private String colorCode;
 
     @Column(length = 100)
     @ColumnDefault("'base'")
     private String colorName;
 
-    @Column(length = 2)
-    @ColumnDefault("10")
+    @Column(nullable = false, length = 2)
     private String sizeCode;
 
     @Column(length = 100)
     @ColumnDefault("'base'")
     private String sizeName;
 
-    @Column(nullable = false, length = 2)
+    @Column(length = 2)
     @ColumnDefault("00")
     private String saleFlag;
 
