@@ -96,13 +96,13 @@ public class ProductServiceTest {
     }
 
     @Test
-    void 상품명검색() {
-        Map<String, Object> map = productService.findProductByProductName("테스트 상품");
+    void 키워드검색() {
+        Map<String, Object> map = productService.findProductByKeyword("테스트");
 
         List<ProductDTO.Response> list = (List<ProductDTO.Response>) map.get("RESULT");
 
         for(ProductDTO.Response pr : list) {
-            assertThat(pr.getProductName()).isEqualTo("테스트 상품");
+            assertThat(pr.getKeyword()).isEqualTo("테스트");
             assertThat(pr.getProductDtResponseDtoList().get(0).getProductDtNo()).isNotNull();
             assertThat(pr.getProductPriceResponseDtoList().get(0).getProductPriceNo()).isNotNull();
         }

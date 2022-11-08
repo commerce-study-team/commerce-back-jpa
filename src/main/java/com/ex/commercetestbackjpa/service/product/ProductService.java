@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,10 +53,10 @@ public class ProductService {
     }
 
     @Transactional
-    public Map<String, Object> findProductByProductName(String productName) {
+    public Map<String, Object> findProductByKeyword(String keyword) {
         Map<String, Object> result = new HashMap<>();
         List<ProductDTO.Response> list = new ArrayList<>();
-        List<Product> productList = productRepository.findByProductName(productName);
+        List<Product> productList = productRepository.findByKeyword(keyword);
 
         for(Product product : productList) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);

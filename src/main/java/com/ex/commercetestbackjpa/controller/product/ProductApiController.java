@@ -32,10 +32,10 @@ public class ProductApiController {
         return productService.findProductByProductNo(productNo);
     }
 
-    @ApiOperation(value = "상품명 조회 메소드")
-    @GetMapping("/findProductName/{productName}")
-    public Map<String, Object> findProductByProductName (@PathVariable String ProductName) {
-        return productService.findProductByProductName(ProductName);
+    @ApiOperation(value = "키워드 조회 메소드")
+    @GetMapping("/findProductKeyword/{keyword}")
+    public Map<String, Object> findProductByKeyword (@PathVariable String keyword) {
+        return productService.findProductByKeyword(keyword);
     }
 
     @ApiOperation(value = "단품 저장 메소드")
