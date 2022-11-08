@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @Api(tags = {"상품조회 및 저장 Controller"})
@@ -39,8 +40,8 @@ public class ProductApiController {
 
     @ApiOperation(value = "단품 저장 메소드")
     @PutMapping("/save/productDt")
-    public Long saveProductDt(@RequestBody @Valid ProductDtDTO.Request productDTRequestDto) {
-        return productService.saveProductDt(productDTRequestDto);
+    public Long saveProductDt(@RequestBody @Valid List<ProductDtDTO.Request> productDTRequestDtoList) {
+        return productService.saveProductDt(productDTRequestDtoList);
     }
 
     @ApiOperation(value = "단품색상 변경 메소드")

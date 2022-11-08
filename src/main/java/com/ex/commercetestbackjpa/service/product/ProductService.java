@@ -113,11 +113,13 @@ public class ProductService {
     }
 
     @Transactional
-    public Long saveProductDt(ProductDtDTO.Request productDTRequestDto) {
-        Product product = productRepository.findById(productDTRequestDto.getProductNo()).get();
-        ProductDT productDT = productDTRequestDto.toEntity(product);
+    public Long saveProductDt(List<ProductDtDTO.Request> productDTRequestDtoList) {
+        Product product = productRepository.findById(productDTRequestDtoList.get(0).getProductNo()).get();
+        for(ProductDtDTO.Request productDto : productDTRequestDtoList) {
+            productDtRepository.save(productDto.toEntity(product));
+        }
 
-        return productDtRepository.save(productDT).getProductDtNo();
+        return product.getProductNo();
     }
 
     // 단품 색상 변경

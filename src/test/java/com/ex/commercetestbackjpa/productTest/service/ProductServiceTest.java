@@ -1,11 +1,7 @@
 package com.ex.commercetestbackjpa.productTest.service;
 
 import com.ex.commercetestbackjpa.domain.dto.product.*;
-import com.ex.commercetestbackjpa.domain.entity.product.Product;
-import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
-import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
 import com.ex.commercetestbackjpa.service.product.ProductService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -114,11 +110,19 @@ public class ProductServiceTest {
 
     @Test
     void 단품저장() {
-        ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
-        productDTRequestDto.setProductNo(1L);
-        productDTRequestDto.setProductDtName("초록붕어빵");
+        List<ProductDtDTO.Request> productDTRequestDtoList = new ArrayList<>();
+        ProductDtDTO.Request productDTRequestDto1 = new ProductDtDTO.Request();
+        productDTRequestDto1.setProductNo(1L);
+        productDTRequestDto1.setProductDtName("초록붕어빵");
 
-        Long productDtNo = productService.saveProductDt(productDTRequestDto);
+        ProductDtDTO.Request productDTRequestDto2 = new ProductDtDTO.Request();
+        productDTRequestDto2.setProductNo(1L);
+        productDTRequestDto2.setProductDtName("파랑붕어빵");
+
+        productDTRequestDtoList.add(productDTRequestDto1);
+        productDTRequestDtoList.add(productDTRequestDto2);
+
+        Long productDtNo = productService.saveProductDt(productDTRequestDtoList);
 
         ProductDTO.Response productResponseDto = productService.findProductByProductNo(1L);
         List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
