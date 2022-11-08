@@ -1,16 +1,13 @@
 package com.ex.commercetestbackjpa.productTest.repository;
 
+import com.ex.commercetestbackjpa.domain.dto.product.ProductDTO;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
-import com.ex.commercetestbackjpa.domain.dto.product.ProductRequestDto;
-import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
 import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.NoSuchElementException;
 
 @SpringBootTest
 public class ProductRepositoryTest {
@@ -25,7 +22,7 @@ public class ProductRepositoryTest {
 
     @Test
     public void saveProductTest() {
-        ProductRequestDto productRequestDto = new ProductRequestDto();
+        ProductDTO.Request productRequestDto = new ProductDTO.Request();
 
         productRequestDto.setProductName("테스트 상품");
         productRequestDto.setKeyword("테스트");

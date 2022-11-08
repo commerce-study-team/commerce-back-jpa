@@ -1,8 +1,7 @@
 package com.ex.commercetestbackjpa.controller.product;
 
-import com.ex.commercetestbackjpa.domain.dto.product.ProductDTRequestDto;
-import com.ex.commercetestbackjpa.domain.dto.product.ProductRequestDto;
-import com.ex.commercetestbackjpa.domain.dto.product.ProductResponseDto;
+import com.ex.commercetestbackjpa.domain.dto.product.ProductDTO;
+import com.ex.commercetestbackjpa.domain.dto.product.ProductDtDTO;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,13 +21,13 @@ public class ProductApiController {
 
     @ApiOperation(value = "상품 저장 메소드")
     @PostMapping("/save")
-    public Long saveProduct (@RequestBody @Valid ProductRequestDto productRequestDto) {
+    public Long saveProduct (@RequestBody @Valid ProductDTO.Request productRequestDto) {
         return productService.saveProduct(productRequestDto);
     }
 
     @ApiOperation(value = "상품코드 조회 메소드")
     @GetMapping("/findProductNo/{productNo}")
-    public ProductResponseDto findProductByProductNo (@PathVariable Long productNo) {
+    public ProductDTO.Response findProductByProductNo (@PathVariable Long productNo) {
         return productService.findProductByProductNo(productNo);
     }
 
@@ -40,19 +39,19 @@ public class ProductApiController {
 
     @ApiOperation(value = "단품 저장 메소드")
     @PutMapping("/save/productDt")
-    public Long saveProductDt(@RequestBody @Valid ProductDTRequestDto productDTRequestDto) {
+    public Long saveProductDt(@RequestBody @Valid ProductDtDTO.Request productDTRequestDto) {
         return productService.saveProductDt(productDTRequestDto);
     }
 
     @ApiOperation(value = "단품색상 변경 메소드")
     @PutMapping("/updateColor")
-    public Long updateProductDtColor(@RequestBody @Valid ProductDTRequestDto productDTRequestDto) {
+    public Long updateProductDtColor(@RequestBody @Valid ProductDtDTO.Request productDTRequestDto) {
         return productService.updateProductDtColor(productDTRequestDto);
     }
 
     @ApiOperation(value = "단품사이즈 변경 메소드")
     @PutMapping("/updateSize")
-    public Long updateProductDtSize(@RequestBody @Valid ProductDTRequestDto productDTRequestDto) {
+    public Long updateProductDtSize(@RequestBody @Valid ProductDtDTO.Request productDTRequestDto) {
         return productService.updateProductDtSize(productDTRequestDto);
     }
 

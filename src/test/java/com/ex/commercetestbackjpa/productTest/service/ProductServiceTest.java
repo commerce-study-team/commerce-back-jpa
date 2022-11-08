@@ -27,9 +27,9 @@ public class ProductServiceTest {
 
     @Test
     public void 상품저장() {
-        ProductRequestDto productRequestDto = new ProductRequestDto();
-        List<ProductDTRequestDto> productDTRequestDtoList = new ArrayList<>();
-        List<ProductPriceRequestDto> productPriceRequestDtoList = new ArrayList<>();
+        ProductDTO.Request productRequestDto = new ProductDTO.Request();
+        List<ProductDtDTO.Request> productDTRequestDtoList = new ArrayList<>();
+        List<ProductPriceDTO.Request> productPriceRequestDtoList = new ArrayList<>();
 
         // 상품 데이터
         productRequestDto.setProductName("테스트 상품");
@@ -40,7 +40,7 @@ public class ProductServiceTest {
         // 상품 데이터 END
 
         // 단품 데이터
-        ProductDTRequestDto productDTRequestDto1 = new ProductDTRequestDto();
+        ProductDtDTO.Request productDTRequestDto1 = new ProductDtDTO.Request();
         productDTRequestDto1.setProductDtName("빨강붕어빵");
         productDTRequestDto1.setColorCode("10");
         productDTRequestDto1.setColorName("빨강");
@@ -48,7 +48,7 @@ public class ProductServiceTest {
         productDTRequestDto1.setSizeName("중");
         productDTRequestDto1.setImage("이미지");
 
-        ProductDTRequestDto productDTRequestDto2 = new ProductDTRequestDto();
+        ProductDtDTO.Request productDTRequestDto2 = new ProductDtDTO.Request();
         productDTRequestDto2.setProductDtName("노랑붕어빵");
         productDTRequestDto2.setColorCode("10");
         productDTRequestDto2.setColorName("노랑");
@@ -61,13 +61,13 @@ public class ProductServiceTest {
         // 단품 데이터 END
 
         // 가격 데이터
-        ProductPriceRequestDto productPriceRequestDto1 = new ProductPriceRequestDto();
+        ProductPriceDTO.Request productPriceRequestDto1 = new ProductPriceDTO.Request();
         productPriceRequestDto1.setApplyDate(LocalDateTime.parse("2022-11-12T11:20:10"));
         productPriceRequestDto1.setSalePrice(5000L);
         productPriceRequestDto1.setCostPrice(2000L);
         productPriceRequestDto1.setMargin(productPriceRequestDto1.getSalePrice() - productPriceRequestDto1.getCostPrice());
 
-        ProductPriceRequestDto productPriceRequestDto2 = new ProductPriceRequestDto();
+        ProductPriceDTO.Request productPriceRequestDto2 = new ProductPriceDTO.Request();
         productPriceRequestDto2.setApplyDate(LocalDateTime.parse("2022-12-25T12:15:30"));
         productPriceRequestDto2.setSalePrice(6000L);
         productPriceRequestDto2.setCostPrice(2000L);
@@ -77,17 +77,17 @@ public class ProductServiceTest {
         productPriceRequestDtoList.add(productPriceRequestDto1);
         productPriceRequestDtoList.add(productPriceRequestDto2);
 
-        productRequestDto.setProductDtRequestDtos(productDTRequestDtoList);
-        productRequestDto.setProductPriceRequestDtos(productPriceRequestDtoList);
+        productRequestDto.setProductDtRequestDtoList(productDTRequestDtoList);
+        productRequestDto.setProductPriceRequestDtoList(productPriceRequestDtoList);
 
         productService.saveProduct(productRequestDto);
     }
 
     @Test
     void 상품검색() {
-        ProductResponseDto productResponseDto = productService.findProductByProductNo(5L);
-        List<ProductDtResponseDto> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
-        List<ProductPriceResponseDto> productPriceResponseDtoList = productResponseDto.getProductPriceResponseDtoList();
+        ProductDTO.Response productResponseDto = productService.findProductByProductNo(1L);
+        List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
+        List<ProductPriceDTO.Response> productPriceResponseDtoList = productResponseDto.getProductPriceResponseDtoList();
 
         assertThat(productResponseDto.getProductNo()).isNotNull();
         assertThat(productDtResponseDtoList.get(0).getProductDtNo()).isNotNull();
@@ -103,9 +103,9 @@ public class ProductServiceTest {
     void 상품명검색() {
         Map<String, Object> map = productService.findProductByProductName("테스트 상품");
 
-        List<ProductResponseDto> list = (List<ProductResponseDto>) map.get("RESULT");
+        List<ProductDTO.Response> list = (List<ProductDTO.Response>) map.get("RESULT");
 
-        for(ProductResponseDto pr : list) {
+        for(ProductDTO.Response pr : list) {
             assertThat(pr.getProductName()).isEqualTo("테스트 상품");
             assertThat(pr.getProductDtResponseDtoList().get(0).getProductDtNo()).isNotNull();
             assertThat(pr.getProductPriceResponseDtoList().get(0).getProductPriceNo()).isNotNull();
@@ -114,14 +114,14 @@ public class ProductServiceTest {
 
     @Test
     void 단품저장() {
-        ProductDTRequestDto productDTRequestDto = new ProductDTRequestDto();
+        ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
         productDTRequestDto.setProductNo(1L);
         productDTRequestDto.setProductDtName("초록붕어빵");
 
         Long productDtNo = productService.saveProductDt(productDTRequestDto);
 
-        ProductResponseDto productResponseDto = productService.findProductByProductNo(1L);
-        List<ProductDtResponseDto> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
+        ProductDTO.Response productResponseDto = productService.findProductByProductNo(1L);
+        List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
 
         assertThat(productDtResponseDtoList.size()).isNotZero();
 
@@ -129,21 +129,21 @@ public class ProductServiceTest {
 
     @Test
     void 단품색상변경() {
-        ProductDTRequestDto productDTRequestDto = new ProductDTRequestDto();
+        ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
         productDTRequestDto.setProductDtNo(1L);
         productDTRequestDto.setColorCode("20");
         productDTRequestDto.setColorName("초록");
 
         productService.updateProductDtColor(productDTRequestDto);
 
-        ProductDtResponseDto  productDtResponseDto = productService.findProductDtByProductDtNo(1L);
+        ProductDtDTO.Response productDtResponseDto = productService.findProductDtByProductDtNo(1L);
 
         assertThat(productDTRequestDto.getColorCode()).isEqualTo(productDtResponseDto.getColorCode());
     }
 
     @Test
     void 단품색상변경실패() {
-        ProductDTRequestDto productDTRequestDto = new ProductDTRequestDto();
+        ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
         productDTRequestDto.setProductDtNo(0L);
         productDTRequestDto.setColorCode("20");
         productDTRequestDto.setColorName("초록");
@@ -153,21 +153,21 @@ public class ProductServiceTest {
 
     @Test
     void 단품크기변경() {
-        ProductDTRequestDto productDTRequestDto = new ProductDTRequestDto();
+        ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
         productDTRequestDto.setProductDtNo(1L);
         productDTRequestDto.setSizeCode("20");
         productDTRequestDto.setSizeName("소");
 
         productService.updateProductDtSize(productDTRequestDto);
 
-        ProductDtResponseDto  productDtResponseDto = productService.findProductDtByProductDtNo(1L);
+        ProductDtDTO.Response  productDtResponseDto = productService.findProductDtByProductDtNo(1L);
 
         assertThat(productDTRequestDto.getSizeCode()).isEqualTo(productDtResponseDto.getSizeCode());
     }
 
     @Test
     void 단품크기변경실패() {
-        ProductDTRequestDto productDTRequestDto = new ProductDTRequestDto();
+        ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
         productDTRequestDto.setProductDtNo(1L);
         productDTRequestDto.setSizeCode("20");
         productDTRequestDto.setSizeName("소");
