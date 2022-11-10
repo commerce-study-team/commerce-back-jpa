@@ -46,8 +46,8 @@ public class ProductService {
     public ProductDTO.Response findProductByProductNo(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("조회된 상품이 없습니다."));
         ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
-        productResponseDto.setProductDtResponseDtoList(this.addProductDtList(product));
-        productResponseDto.setProductPriceResponseDtoList(this.addProductPriceList(product));
+        productResponseDto.addProductDtList(product);
+        productResponseDto.addProductPriceList(product);
 
         return productResponseDto;
     }
@@ -60,8 +60,8 @@ public class ProductService {
 
         for(Product product : productList) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
-            productResponseDto.setProductDtResponseDtoList(this.addProductDtList(product));
-            productResponseDto.setProductPriceResponseDtoList(this.addProductPriceList(product));
+            productResponseDto.addProductDtList(product);
+            productResponseDto.addProductPriceList(product);
             list.add(productResponseDto);
         }
 
@@ -77,38 +77,14 @@ public class ProductService {
 
         for(Product product : productList) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
-            productResponseDto.setProductDtResponseDtoList(this.addProductDtList(product));
-            productResponseDto.setProductPriceResponseDtoList(this.addProductPriceList(product));
+            productResponseDto.addProductDtList(product);
+            productResponseDto.addProductPriceList(product);
             list.add(productResponseDto);
         }
 
         result.put("RESULT", list);
 
         return result;
-    }
-
-    private List<ProductDtDTO.Response> addProductDtList(Product product) {
-        List<ProductDtDTO.Response> productDtResponseDtoList = new ArrayList<>();
-        List<ProductDT> productDTList = product.getProductDtList();
-
-        // 단품 add
-        for (ProductDT productDT : productDTList) {
-            productDtResponseDtoList.add(new ProductDtDTO.Response(productDT));
-        }
-
-        return productDtResponseDtoList;
-    }
-
-    private List<ProductPriceDTO.Response> addProductPriceList(Product product) {
-        List<ProductPriceDTO.Response> productPriceResponseDtoList = new ArrayList<>();
-        List<ProductPrice> productPriceList = product.getProductPriceList();
-
-        // 가격 add
-        for (ProductPrice productPrice : productPriceList) {
-            productPriceResponseDtoList.add(new ProductPriceDTO.Response(productPrice));
-        }
-
-        return productPriceResponseDtoList;
     }
 
     @Transactional
@@ -141,7 +117,7 @@ public class ProductService {
     }
 
     public ProductDtDTO.Response findProductDtByProductDtNo(Long productDtNo) {
-        ProductDT productDT = productDtRepository.findById(productDtNo).get();
+        ProductDT productDT = productDtRepository.findById(productDtNo).orElseThrow(() -> new NoSuchElementException("단품을 찾을 수 없습니다."));
 
         return new ProductDtDTO.Response(productDT);
     }

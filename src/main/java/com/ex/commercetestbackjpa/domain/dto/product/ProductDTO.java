@@ -1,9 +1,12 @@
 package com.ex.commercetestbackjpa.domain.dto.product;
 
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDTO {
@@ -67,9 +70,9 @@ public class ProductDTO {
         private int maxBuy;
         private long commentCount;
 
-        private List<ProductDtDTO.Response> productDtResponseDtoList;
+        private List<ProductDtDTO.Response> productDtResponseDtoList = new ArrayList<>();
 
-        private List<ProductPriceDTO.Response> productPriceResponseDtoList;
+        private List<ProductPriceDTO.Response> productPriceResponseDtoList = new ArrayList<>();
 
         public Response (Product product) {
             this.productNo = product.getProductNo();
@@ -83,6 +86,23 @@ public class ProductDTO {
             this.commentCount = product.getCommentCount();
         }
 
+        public void addProductDtList(Product product) {
+            List<ProductDT> productDTList = product.getProductDtList();
+
+            // 단품 add
+            for (ProductDT productDT : productDTList) {
+                productDtResponseDtoList.add(new ProductDtDTO.Response(productDT));
+            }
+        }
+
+        public void addProductPriceList(Product product) {
+            List<ProductPrice> productPriceList = product.getProductPriceList();
+
+            // 가격 add
+            for (ProductPrice productPrice : productPriceList) {
+                productPriceResponseDtoList.add(new ProductPriceDTO.Response(productPrice));
+            }
+        }
     }
 
 }
