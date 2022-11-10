@@ -130,6 +130,22 @@ public class ProductServiceTest {
     }
 
     @Test
+    void 단품저장실패() {
+        List<ProductDtDTO.Request> productDTRequestDtoList = new ArrayList<>();
+        ProductDtDTO.Request productDTRequestDto1 = new ProductDtDTO.Request();
+        productDTRequestDto1.setProductDtName("초록붕어빵");
+
+        ProductDtDTO.Request productDTRequestDto2 = new ProductDtDTO.Request();
+        productDTRequestDto2.setProductDtName("파랑붕어빵");
+
+        productDTRequestDtoList.add(productDTRequestDto1);
+        productDTRequestDtoList.add(productDTRequestDto2);
+
+        assertThrows(NoSuchElementException.class, () -> productService.saveProductDt(productDTRequestDtoList, 1000L));
+
+    }
+
+    @Test
     void 단품색상변경() {
         ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
         productDTRequestDto.setProductDtNo(1L);
