@@ -112,8 +112,8 @@ public class ProductService {
     }
 
     @Transactional
-    public Long saveProductDt(List<ProductDtDTO.Request> productDTRequestDtoList) {
-        Product product = productRepository.findById(productDTRequestDtoList.get(0).getProductNo()).get();
+    public Long saveProductDt(List<ProductDtDTO.Request> productDTRequestDtoList, Long productNo) {
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
         for(ProductDtDTO.Request productDto : productDTRequestDtoList) {
             productDtRepository.save(productDto.toEntity(product));
         }

@@ -30,9 +30,6 @@ public class ProductDtDTO {
 
         private String image;
 
-        @ApiModelProperty(value = "상품코드", example = "1L", required = true)
-        private Long ProductNo;
-
         public ProductDT toEntity(Product product) {
             return ProductDT.builder()
                     .productDtName(this.productDtName)

@@ -21,44 +21,44 @@ public class ProductApiController {
     private final ProductService productService;
 
     @ApiOperation(value = "상품 저장 메소드")
-    @PostMapping("/save")
+    @PostMapping("/")
     public Long saveProduct (@RequestBody @Valid ProductDTO.Request productRequestDto) {
         return productService.saveProduct(productRequestDto);
     }
 
     @ApiOperation(value = "상품코드 조회 메소드")
-    @GetMapping("/findProductNo/{productNo}")
+    @GetMapping("/{productNo}")
     public ProductDTO.Response findProductByProductNo (@PathVariable Long productNo) {
         return productService.findProductByProductNo(productNo);
-    }
-
-    @ApiOperation(value = "키워드 조회 메소드")
-    @GetMapping("/findProductKeyword/{keyword}")
-    public Map<String, Object> findProductByKeyword (@PathVariable String keyword) {
-        return productService.findProductByKeyword(keyword);
-    }
-
-    @ApiOperation(value = "단품 저장 메소드")
-    @PutMapping("/save/productDt")
-    public Long saveProductDt(@RequestBody @Valid List<ProductDtDTO.Request> productDTRequestDtoList) {
-        return productService.saveProductDt(productDTRequestDtoList);
-    }
-
-    @ApiOperation(value = "단품색상 변경 메소드")
-    @PutMapping("/updateColor")
-    public Long updateProductDtColor(@RequestBody @Valid ProductDtDTO.Request productDTRequestDto) {
-        return productService.updateProductDtColor(productDTRequestDto);
-    }
-
-    @ApiOperation(value = "단품사이즈 변경 메소드")
-    @PutMapping("/updateSize")
-    public Long updateProductDtSize(@RequestBody @Valid ProductDtDTO.Request productDTRequestDto) {
-        return productService.updateProductDtSize(productDTRequestDto);
     }
 
     @ApiOperation(value = "전체상품 조회 메소드")
     @GetMapping("")
     public Map<String, Object> findProductAll () {
         return productService.findProductAll();
+    }
+
+    @ApiOperation(value = "키워드 조회 메소드")
+    @GetMapping("/{keyword}/findByKeyword")
+    public Map<String, Object> findProductByKeyword (@PathVariable String keyword) {
+        return productService.findProductByKeyword(keyword);
+    }
+
+    @ApiOperation(value = "단품 저장 메소드")
+    @PostMapping("/productDt/{productNo}")
+    public Long saveProductDt(@RequestBody @Valid List<ProductDtDTO.Request> productDTRequestDtoList, @PathVariable Long productNo) {
+        return productService.saveProductDt(productDTRequestDtoList, productNo);
+    }
+
+    @ApiOperation(value = "단품색상 변경 메소드")
+    @PatchMapping("/productDt/updateColor")
+    public Long updateProductDtColor(@RequestBody @Valid ProductDtDTO.Request productDTRequestDto) {
+        return productService.updateProductDtColor(productDTRequestDto);
+    }
+
+    @ApiOperation(value = "단품사이즈 변경 메소드")
+    @PatchMapping("/productDt/updateSize")
+    public Long updateProductDtSize(@RequestBody @Valid ProductDtDTO.Request productDTRequestDto) {
+        return productService.updateProductDtSize(productDTRequestDto);
     }
 }

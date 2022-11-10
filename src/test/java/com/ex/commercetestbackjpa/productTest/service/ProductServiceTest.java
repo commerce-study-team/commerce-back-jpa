@@ -112,17 +112,15 @@ public class ProductServiceTest {
     void 단품저장() {
         List<ProductDtDTO.Request> productDTRequestDtoList = new ArrayList<>();
         ProductDtDTO.Request productDTRequestDto1 = new ProductDtDTO.Request();
-        productDTRequestDto1.setProductNo(1L);
         productDTRequestDto1.setProductDtName("초록붕어빵");
 
         ProductDtDTO.Request productDTRequestDto2 = new ProductDtDTO.Request();
-        productDTRequestDto2.setProductNo(1L);
         productDTRequestDto2.setProductDtName("파랑붕어빵");
 
         productDTRequestDtoList.add(productDTRequestDto1);
         productDTRequestDtoList.add(productDTRequestDto2);
 
-        Long productDtNo = productService.saveProductDt(productDTRequestDtoList);
+        Long productDtNo = productService.saveProductDt(productDTRequestDtoList, 1L);
 
         ProductDTO.Response productResponseDto = productService.findProductByProductNo(1L);
         List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
