@@ -1,0 +1,3 @@
+[submodule "commerce-back-jpa-submodule"]
+	path = commerce-back-jpa-submodule
+	url = https://github.com/youjingim/commerce-back-jpa-submodule
