@@ -27,22 +27,16 @@ public class ProductApiController {
         return productService.saveProduct(productRequestDto);
     }
 
-    @ApiOperation(value = "상품 조회 메소드")
+    @ApiOperation(value = "상품 단일 조회 메소드")
     @GetMapping("/{productNo}")
     public ProductDTO.Response findProductByProductNo (@PathVariable Long productNo) {
         return productService.findProductByProductNo(productNo);
     }
 
-    @ApiOperation(value = "전체 상품 조회 메소드")
-    @GetMapping("")
-    public Map<String, Object> findProductAll () {
-        return productService.findProductAll();
-    }
-
-    @ApiOperation(value = "키워드 조회 메소드")
-    @GetMapping("/{keyword}/findByKeyword")
-    public Map<String, Object> findProductByKeyword (@PathVariable String keyword) {
-        return productService.findProductByKeyword(keyword);
+    @ApiOperation(value = "상품 조회 메소드")
+    @GetMapping(value = {"/", "/{option}/{filterValue}"})
+    public Map<String, Object> findProductByOptions (@PathVariable String option, @PathVariable String filterValue) {
+        return productService.findProductByOptions(option, filterValue);
     }
 
     @ApiOperation(value = "단품 저장 메소드")

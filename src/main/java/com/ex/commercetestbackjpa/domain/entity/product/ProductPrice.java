@@ -23,7 +23,6 @@ public class ProductPrice {
     private Long productPriceNo;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    @UniqueElements
     private LocalDateTime applyDate;
 
     @Column(nullable = false, length = 100)

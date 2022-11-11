@@ -80,7 +80,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void 상품검색() {
+    void 단일상품검색() {
         ProductDTO.Response productResponseDto = productService.findProductByProductNo(6L);
         List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
         ProductPriceDTO.Response productPriceResponseDto = productResponseDto.getProductPriceResponseDto();
@@ -97,15 +97,24 @@ public class ProductServiceTest {
 
     @Test
     void 키워드검색() {
-        Map<String, Object> map = productService.findProductByKeyword("테스트");
+        Map<String, Object> map = productService.findProductByOptions("Keyword", "테스트");
 
         List<ProductDTO.Response> list = (List<ProductDTO.Response>) map.get("RESULT");
 
         for(ProductDTO.Response pr : list) {
             assertThat(pr.getKeyword()).isEqualTo("테스트");
             assertThat(pr.getProductDtResponseDtoList().get(0).getProductDtNo()).isNotNull();
-            assertThat(pr.getProductPriceResponseDtoList().get(0).getProductPriceNo()).isNotNull();
+            assertThat(pr.getProductPriceResponseDto().getProductPriceNo()).isNotNull();
         }
+    }
+
+    @Test
+    void 전체상품검색() {
+        Map<String, Object> map = productService.findProductByOptions("", "");
+
+        List<ProductDTO.Response> list = (List<ProductDTO.Response>) map.get("RESULT");
+
+        assertThat(list.size()).isNotZero();
     }
 
     @Test
@@ -182,12 +191,17 @@ public class ProductServiceTest {
 
     @Test
     void 상품가격사용여부변경() {
+
+        List<ProductPriceDTO.Request> list = new ArrayList<>();
         ProductPriceDTO.Request productPriceRequestDTO = new ProductPriceDTO.Request();
         productPriceRequestDTO.setProductPriceNo(1L);
         productPriceRequestDTO.setUseYn(false);
+        list.add(productPriceRequestDTO);
 
-        productService.updateProductPriceUseYn(productPriceRequestDTO);
+        productService.updateProductPrice(list, 1L);
+
+        ProductDTO.Response productDTO= productService.findProductByProductNo(1L);
+
+        assertThat(productDTO.getProductPriceResponseDtoList().get(0).getUseYn()).isEqualTo(false);
     }
-
-
 }

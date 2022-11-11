@@ -53,10 +53,29 @@ public class ProductService {
     }
 
     @Transactional
-    public Map<String, Object> findProductByKeyword(String keyword) {
+    public Map<String, Object> findProductByOptions(String option, String filterValue) {
         Map<String, Object> result = new HashMap<>();
         List<ProductDTO.Response> list = new ArrayList<>();
-        List<Product> productList = productRepository.findByKeyword(keyword);
+        List<Product> productList = null;
+
+        switch (option) {
+            case "keyword" :
+                productList = productRepository.findByKeyword(filterValue);
+                break;
+            case "productName" :
+                productList = productRepository.findByProductName(filterValue);
+                break;
+            case "saleFlag" :
+                productList = productRepository.findBySaleFlag(filterValue);
+                break;
+            case "signFlag" :
+                productList = productRepository.findBySignFlag(filterValue);
+                break;
+            default:
+                productList = productRepository.findAll();
+        }
+
+
 
         for(Product product : productList) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
@@ -66,24 +85,6 @@ public class ProductService {
         }
 
         result.put("RESULT", list);
-        return result;
-    }
-
-    @Transactional
-    public HashMap<String, Object> findProductAll() {
-        HashMap<String, Object> result = new HashMap<>();
-        List<ProductDTO.Response> list = new ArrayList<>();
-        List<Product> productList = productRepository.findAll();
-
-        for(Product product : productList) {
-            ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
-            productResponseDto.addProductDtList(product);
-            productResponseDto.findProductPrice(product);
-            list.add(productResponseDto);
-        }
-
-        result.put("RESULT", list);
-
         return result;
     }
 
