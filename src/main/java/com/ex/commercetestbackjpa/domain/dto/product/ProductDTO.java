@@ -6,8 +6,11 @@ import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class ProductDTO {
 
@@ -70,6 +73,8 @@ public class ProductDTO {
         private int maxBuy;
         private long commentCount;
 
+        private ProductPriceDTO.Response productPriceResponseDto;
+
         private List<ProductDtDTO.Response> productDtResponseDtoList = new ArrayList<>();
 
         private List<ProductPriceDTO.Response> productPriceResponseDtoList = new ArrayList<>();
@@ -102,6 +107,18 @@ public class ProductDTO {
             for (ProductPrice productPrice : productPriceList) {
                 productPriceResponseDtoList.add(new ProductPriceDTO.Response(productPrice));
             }
+        }
+
+        public void findProductPrice (Product product) {
+            List<ProductPrice> productPriceList = product.getProductPriceList();
+
+            ProductPrice productPrice = productPriceList.stream()
+                    .filter(n -> n.getUseYn() == true)
+                    .filter(n -> n.getApplyDate().isBefore(LocalDateTime.now()))
+                    .max(Comparator.comparing(ProductPrice::getApplyDate))
+                    .orElseThrow(() -> new NoSuchElementException("가격 정보를 찾을 수 없습니다."));
+
+            this.productPriceResponseDto =  new ProductPriceDTO.Response(productPrice);
         }
     }
 

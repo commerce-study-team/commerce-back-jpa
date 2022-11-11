@@ -58,7 +58,7 @@ public class ProductServiceTest {
 
         // 가격 데이터
         ProductPriceDTO.Request productPriceRequestDto1 = new ProductPriceDTO.Request();
-        productPriceRequestDto1.setApplyDate(LocalDateTime.parse("2022-11-12T11:20:10"));
+        productPriceRequestDto1.setApplyDate(LocalDateTime.parse("2022-11-09T11:20:10"));
         productPriceRequestDto1.setSalePrice(5000L);
         productPriceRequestDto1.setCostPrice(2000L);
         productPriceRequestDto1.setMargin(productPriceRequestDto1.getSalePrice() - productPriceRequestDto1.getCostPrice());
@@ -81,13 +81,13 @@ public class ProductServiceTest {
 
     @Test
     void 상품검색() {
-        ProductDTO.Response productResponseDto = productService.findProductByProductNo(1L);
+        ProductDTO.Response productResponseDto = productService.findProductByProductNo(6L);
         List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
-        List<ProductPriceDTO.Response> productPriceResponseDtoList = productResponseDto.getProductPriceResponseDtoList();
+        ProductPriceDTO.Response productPriceResponseDto = productResponseDto.getProductPriceResponseDto();
 
         assertThat(productResponseDto.getProductNo()).isNotNull();
         assertThat(productDtResponseDtoList.get(0).getProductDtNo()).isNotNull();
-        assertThat(productPriceResponseDtoList.get(0).getProductPriceNo()).isNotNull();
+        assertThat(productPriceResponseDto.getProductPriceNo()).isNotNull();
     }
 
     @Test
@@ -146,51 +146,47 @@ public class ProductServiceTest {
     }
 
     @Test
-    void 단품색상변경() {
+    void 단품변경() {
+        List<ProductDtDTO.Request> list = new ArrayList<>();
         ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
         productDTRequestDto.setProductDtNo(1L);
         productDTRequestDto.setColorCode("20");
         productDTRequestDto.setColorName("초록");
+        productDTRequestDto.setSizeCode("20");
+        productDTRequestDto.setSizeName("소");
 
-        productService.updateProductDtColor(productDTRequestDto);
+        list.add(productDTRequestDto);
+
+        productService.updateProductDt(list, 1L);
 
         ProductDtDTO.Response productDtResponseDto = productService.findProductDtByProductDtNo(1L);
 
         assertThat(productDTRequestDto.getColorCode()).isEqualTo(productDtResponseDto.getColorCode());
-    }
-
-    @Test
-    void 단품색상변경실패() {
-        ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
-        productDTRequestDto.setProductDtNo(0L);
-        productDTRequestDto.setColorCode("20");
-        productDTRequestDto.setColorName("초록");
-
-        assertThrows(NoSuchElementException.class, () -> productService.updateProductDtColor(productDTRequestDto));
-    }
-
-    @Test
-    void 단품크기변경() {
-        ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
-        productDTRequestDto.setProductDtNo(1L);
-        productDTRequestDto.setSizeCode("20");
-        productDTRequestDto.setSizeName("소");
-
-        productService.updateProductDtSize(productDTRequestDto);
-
-        ProductDtDTO.Response  productDtResponseDto = productService.findProductDtByProductDtNo(1L);
-
         assertThat(productDTRequestDto.getSizeCode()).isEqualTo(productDtResponseDto.getSizeCode());
     }
 
     @Test
-    void 단품크기변경실패() {
+    void 단품변경실패() {
+        List<ProductDtDTO.Request> list = new ArrayList<>();
         ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
-        productDTRequestDto.setProductDtNo(1L);
+        productDTRequestDto.setProductDtNo(0L);
+        productDTRequestDto.setColorCode("20");
+        productDTRequestDto.setColorName("초록");
         productDTRequestDto.setSizeCode("20");
         productDTRequestDto.setSizeName("소");
 
-        assertThrows(NoSuchElementException.class, () -> productService.updateProductDtSize(productDTRequestDto));
+        list.add(productDTRequestDto);
+
+        assertThrows(NoSuchElementException.class, () -> productService.updateProductDt(list, 1L));
+    }
+
+    @Test
+    void 상품가격사용여부변경() {
+        ProductPriceDTO.Request productPriceRequestDTO = new ProductPriceDTO.Request();
+        productPriceRequestDTO.setProductPriceNo(1L);
+        productPriceRequestDTO.setUseYn(false);
+
+        productService.updateProductPriceUseYn(productPriceRequestDTO);
     }
 
 

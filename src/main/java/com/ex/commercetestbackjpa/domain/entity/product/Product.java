@@ -49,6 +49,10 @@ public class Product extends BaseEntity {
     @ColumnDefault("0")
     private long commentCount;
 
+    @Column(nullable = false, length = 2)
+    @ColumnDefault("00")
+    private String signFlag;
+
     @BatchSize(size=10)
     @OneToMany(mappedBy = "product")
     private List<ProductDT> productDtList = new ArrayList<>();

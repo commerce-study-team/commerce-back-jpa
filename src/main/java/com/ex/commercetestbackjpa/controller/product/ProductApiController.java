@@ -2,6 +2,7 @@ package com.ex.commercetestbackjpa.controller.product;
 
 import com.ex.commercetestbackjpa.domain.dto.product.ProductDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductDtDTO;
+import com.ex.commercetestbackjpa.domain.dto.product.ProductPriceDTO;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,13 +27,13 @@ public class ProductApiController {
         return productService.saveProduct(productRequestDto);
     }
 
-    @ApiOperation(value = "상품코드 조회 메소드")
+    @ApiOperation(value = "상품 조회 메소드")
     @GetMapping("/{productNo}")
     public ProductDTO.Response findProductByProductNo (@PathVariable Long productNo) {
         return productService.findProductByProductNo(productNo);
     }
 
-    @ApiOperation(value = "전체상품 조회 메소드")
+    @ApiOperation(value = "전체 상품 조회 메소드")
     @GetMapping("")
     public Map<String, Object> findProductAll () {
         return productService.findProductAll();
@@ -45,20 +46,20 @@ public class ProductApiController {
     }
 
     @ApiOperation(value = "단품 저장 메소드")
-    @PostMapping("/productDt/{productNo}")
+    @PostMapping("/{productNo}/dt")
     public Long saveProductDt(@RequestBody @Valid List<ProductDtDTO.Request> productDTRequestDtoList, @PathVariable Long productNo) {
         return productService.saveProductDt(productDTRequestDtoList, productNo);
     }
 
-    @ApiOperation(value = "단품색상 변경 메소드")
-    @PatchMapping("/productDt/updateColor")
-    public Long updateProductDtColor(@RequestBody @Valid ProductDtDTO.Request productDTRequestDto) {
-        return productService.updateProductDtColor(productDTRequestDto);
+    @ApiOperation(value = "단품 변경 메소드")
+    @PatchMapping("/{productNo}/dt/update")
+    public Long updateProductDtColor(@RequestBody @Valid List<ProductDtDTO.Request> productDTRequestDtoList, @PathVariable Long productNo) {
+        return productService.updateProductDt(productDTRequestDtoList, productNo);
     }
 
-    @ApiOperation(value = "단품사이즈 변경 메소드")
-    @PatchMapping("/productDt/updateSize")
-    public Long updateProductDtSize(@RequestBody @Valid ProductDtDTO.Request productDTRequestDto) {
-        return productService.updateProductDtSize(productDTRequestDto);
+    @ApiOperation(value = "가격 변경 메소드")
+    @PatchMapping("/{productNo}/price")
+    public Long updateProductPrice(@RequestBody @Valid List<ProductPriceDTO.Request> productPriceRequestDtoList, @PathVariable Long productNo) {
+        return productService.updateProductPrice(productPriceRequestDtoList, productNo);
     }
 }

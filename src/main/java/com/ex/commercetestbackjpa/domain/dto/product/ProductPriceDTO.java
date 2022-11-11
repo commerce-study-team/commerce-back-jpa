@@ -13,6 +13,8 @@ public class ProductPriceDTO {
     @Setter
     public static class Request {
 
+        private Long productPriceNo;
+
         @NotBlank(message = "적용일자는 필수 입력값입니다.")
         private LocalDateTime applyDate;
 
@@ -63,6 +65,10 @@ public class ProductPriceDTO {
             this.costPrice = productPrice.getCostPrice();
             this.margin = productPrice.getMargin();
             this.useYn = productPrice.getUseYn();
+        }
+
+        public void updateUseYn(Boolean useYn) {
+            this.useYn = useYn;
         }
 
     }
