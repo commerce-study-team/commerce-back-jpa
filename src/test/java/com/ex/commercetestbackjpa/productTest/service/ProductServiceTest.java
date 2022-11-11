@@ -140,9 +140,19 @@ public class ProductServiceTest {
         List<ProductDtDTO.Request> productDTRequestDtoList = new ArrayList<>();
         ProductDtDTO.Request productDTRequestDto1 = new ProductDtDTO.Request();
         productDTRequestDto1.setProductDtName("초록붕어빵");
+        productDTRequestDto1.setColorCode("10");
+        productDTRequestDto1.setColorName("초록");
+        productDTRequestDto1.setSizeCode("10");
+        productDTRequestDto1.setSizeName("중");
+        productDTRequestDto1.setImage("이미지");
 
         ProductDtDTO.Request productDTRequestDto2 = new ProductDtDTO.Request();
         productDTRequestDto2.setProductDtName("파랑붕어빵");
+        productDTRequestDto2.setColorCode("10");
+        productDTRequestDto2.setColorName("파랑");
+        productDTRequestDto2.setSizeCode("10");
+        productDTRequestDto2.setSizeName("중");
+        productDTRequestDto2.setImage("이미지");
 
         productDTRequestDtoList.add(productDTRequestDto1);
         productDTRequestDtoList.add(productDTRequestDto2);

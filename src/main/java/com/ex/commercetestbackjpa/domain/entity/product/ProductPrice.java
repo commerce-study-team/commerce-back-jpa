@@ -41,12 +41,12 @@ public class ProductPrice {
     private Product product;
 
     @Builder
-    private ProductPrice(LocalDateTime applyDate, Long salePrice, Long costPrice, Long margin, Product product) {
+    private ProductPrice(LocalDateTime applyDate, Long salePrice, Long costPrice, Product product) {
 
         this.applyDate = applyDate;
         this.salePrice = salePrice;
         this.costPrice = costPrice;
-        this.margin = margin;
+        this.margin = salePrice - costPrice;
         this.product = product;
     }
 

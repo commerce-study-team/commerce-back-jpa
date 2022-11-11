@@ -34,7 +34,6 @@ public class ProductPriceDTO {
                     .applyDate(this.applyDate)
                     .salePrice(this.salePrice)
                     .costPrice(this.costPrice)
-                    .margin(this.margin)
                     .product(product)
                     .build();
         }
