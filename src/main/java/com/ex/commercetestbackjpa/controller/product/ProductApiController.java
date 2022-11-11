@@ -27,6 +27,12 @@ public class ProductApiController {
         return productService.saveProduct(productRequestDto);
     }
 
+    @ApiOperation(value = "상품 정보 변경 메서드")
+    @PatchMapping("/")
+    public Long updateProduct (@RequestBody @Valid ProductDTO.Request productRequestDto) {
+        return productService.updateProduct(productRequestDto);
+    }
+
     @ApiOperation(value = "상품 단일 조회 메소드")
     @GetMapping("/{productNo}")
     public ProductDTO.Response findProductByProductNo (@PathVariable Long productNo) {
@@ -56,8 +62,6 @@ public class ProductApiController {
     public Long saveProductPrice(@RequestBody @Valid List<ProductPriceDTO.Request> productPriceRequestDtoList, @PathVariable Long productNo) {
         return productService.saveProductPrice(productPriceRequestDtoList, productNo);
     }
-
-
 
     @ApiOperation(value = "가격 변경 메소드")
     @PatchMapping("/{productNo}/price")

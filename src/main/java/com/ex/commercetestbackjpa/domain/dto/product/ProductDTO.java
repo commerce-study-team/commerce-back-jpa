@@ -34,6 +34,8 @@ public class ProductDTO {
 
         private String saleFlag;
 
+        private String signFlag;
+
         @NotBlank(message = "검색어는 필수 입력값입니다.")
         private String keyword;
 
@@ -69,6 +71,9 @@ public class ProductDTO {
         private String mgroup;
         private String sgroup;
         private String saleFlag;
+
+        private String signFlag;
+
         private String keyword;
         private int maxBuy;
         private long commentCount;
@@ -86,6 +91,7 @@ public class ProductDTO {
             this.mgroup = product.getMgroup();
             this.sgroup = product.getSgroup();
             this.saleFlag = product.getSaleFlag();
+            this.signFlag = product.getSignFlag();
             this.keyword = product.getKeyword();
             this.maxBuy = product.getMaxBuy();
             this.commentCount = product.getCommentCount();

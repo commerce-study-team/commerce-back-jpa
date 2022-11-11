@@ -71,6 +71,10 @@ public class Product extends BaseEntity {
         this.keyword = keyword;
     }
 
+    public void updateProductName(String productName) {
+        this.productName = productName;
+    }
+
     public void updateLMSgroup(String lgroup, String mgroup, String sgroup) {
         this.lgroup = lgroup;
         this.mgroup = mgroup;
@@ -87,5 +91,9 @@ public class Product extends BaseEntity {
 
     public void updateSaleFlag(String saleFlag) {
         this.saleFlag = saleFlag;
+    }
+
+    public void updateSignFlag(String signFlag) {
+        this.signFlag = signFlag;
     }
 }

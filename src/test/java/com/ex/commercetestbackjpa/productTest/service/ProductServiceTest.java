@@ -61,13 +61,11 @@ public class ProductServiceTest {
         productPriceRequestDto1.setApplyDate(LocalDateTime.parse("2022-11-09T11:20:10"));
         productPriceRequestDto1.setSalePrice(5000L);
         productPriceRequestDto1.setCostPrice(2000L);
-        productPriceRequestDto1.setMargin(productPriceRequestDto1.getSalePrice() - productPriceRequestDto1.getCostPrice());
 
         ProductPriceDTO.Request productPriceRequestDto2 = new ProductPriceDTO.Request();
         productPriceRequestDto2.setApplyDate(LocalDateTime.parse("2022-12-25T12:15:30"));
         productPriceRequestDto2.setSalePrice(6000L);
         productPriceRequestDto2.setCostPrice(2000L);
-        productPriceRequestDto2.setMargin(productPriceRequestDto2.getSalePrice() - productPriceRequestDto2.getCostPrice());
         // 가격 데이터 END
 
         productPriceRequestDtoList.add(productPriceRequestDto1);
@@ -77,6 +75,26 @@ public class ProductServiceTest {
         productRequestDto.setProductPriceRequestDtoList(productPriceRequestDtoList);
 
         productService.saveProduct(productRequestDto);
+    }
+
+    @Test
+    public void 상품정보변경() {
+        ProductDTO.Request productRequestDto = new ProductDTO.Request();
+
+        productRequestDto.setProductNo(1L);
+        productRequestDto.setProductName("테스트 상품 변경");
+        productRequestDto.setKeyword("테스트");
+        productRequestDto.setLgroup("10");
+        productRequestDto.setMgroup("10");
+        productRequestDto.setSgroup("10");
+        productRequestDto.setSaleFlag("00");
+        productRequestDto.setSignFlag("10");
+
+        Long productNo = productService.updateProduct(productRequestDto);
+
+        ProductDTO.Response changeProductDTO = productService.findProductByProductNo(productNo);
+
+        assertThat(productRequestDto.getProductName()).isEqualTo(changeProductDTO.getProductName());
     }
 
     @Test
@@ -129,7 +147,7 @@ public class ProductServiceTest {
         productDTRequestDtoList.add(productDTRequestDto1);
         productDTRequestDtoList.add(productDTRequestDto2);
 
-        Long productDtNo = productService.saveProductDt(productDTRequestDtoList, 1L);
+        Long productNo = productService.saveProductDt(productDTRequestDtoList, 1L);
 
         ProductDTO.Response productResponseDto = productService.findProductByProductNo(1L);
         List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
@@ -195,13 +213,43 @@ public class ProductServiceTest {
         List<ProductPriceDTO.Request> list = new ArrayList<>();
         ProductPriceDTO.Request productPriceRequestDTO = new ProductPriceDTO.Request();
         productPriceRequestDTO.setProductPriceNo(1L);
-        productPriceRequestDTO.setUseYn(false);
+        productPriceRequestDTO.setSalePrice(10000L);
+        productPriceRequestDTO.setCostPrice(2000L);
+        productPriceRequestDTO.setUseYn(true);
         list.add(productPriceRequestDTO);
 
         productService.updateProductPrice(list, 1L);
 
         ProductDTO.Response productDTO= productService.findProductByProductNo(1L);
 
-        assertThat(productDTO.getProductPriceResponseDtoList().get(0).getUseYn()).isEqualTo(false);
+        assertThat(productDTO.getProductPriceResponseDto().getUseYn()).isEqualTo(true);
+    }
+
+    @Test
+    void 가격저장() {
+        List<ProductPriceDTO.Request> productPriceRequestDtoList = new ArrayList<>();
+        // 가격 데이터
+        ProductPriceDTO.Request productPriceRequestDto1 = new ProductPriceDTO.Request();
+        productPriceRequestDto1.setApplyDate(LocalDateTime.parse("2022-11-07T11:20:10"));
+        productPriceRequestDto1.setSalePrice(5000L);
+        productPriceRequestDto1.setCostPrice(2000L);
+        productPriceRequestDto1.setMargin(productPriceRequestDto1.getSalePrice() - productPriceRequestDto1.getCostPrice());
+
+        ProductPriceDTO.Request productPriceRequestDto2 = new ProductPriceDTO.Request();
+        productPriceRequestDto2.setApplyDate(LocalDateTime.parse("2022-12-26T12:15:30"));
+        productPriceRequestDto2.setSalePrice(6000L);
+        productPriceRequestDto2.setCostPrice(2000L);
+        productPriceRequestDto2.setMargin(productPriceRequestDto2.getSalePrice() - productPriceRequestDto2.getCostPrice());
+        // 가격 데이터 END
+
+        productPriceRequestDtoList.add(productPriceRequestDto1);
+        productPriceRequestDtoList.add(productPriceRequestDto2);
+
+        Long productNo = productService.saveProductPrice(productPriceRequestDtoList, 1L);
+
+        ProductDTO.Response productResponseDto = productService.findProductByProductNo(1L);
+        List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
+
+        assertThat(productDtResponseDtoList.size()).isNotZero();
     }
 }

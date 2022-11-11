@@ -87,13 +87,27 @@ public class ProductService {
     }
 
     @Transactional
+    public Long updateProduct(ProductDTO.Request productRequestDto) {
+        Product product = productRepository.findById(productRequestDto.getProductNo()).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
+
+        product.updateProductName(productRequestDto.getProductName());
+        product.updateKeyword(productRequestDto.getKeyword());
+        product.updateSaleFlag(productRequestDto.getSaleFlag());
+        product.updateLMSgroup(productRequestDto.getLgroup(), productRequestDto.getMgroup(), productRequestDto.getSgroup());
+        product.updateMaxBuy(product.getMaxBuy());
+        product.updateSignFlag(product.getSignFlag());
+
+        return product.getProductNo();
+    }
+
+    @Transactional
     public Long saveProductDt(List<ProductDtDTO.Request> productDTRequestDtoList, Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
         for(ProductDtDTO.Request productDtDto : productDTRequestDtoList) {
             productDtRepository.save(productDtDto.toEntity(product));
         }
 
-        return product.getProductNo();
+        return productNo;
     }
 
     @Transactional
@@ -109,9 +123,8 @@ public class ProductService {
     }
 
     public ProductDtDTO.Response findProductDtByProductDtNo(Long productDtNo) {
-        ProductDT productDT = productDtRepository.findById(productDtNo).orElseThrow(() -> new NoSuchElementException("단품 정보를 찾을 수 없습니다."));
-
-        return new ProductDtDTO.Response(productDT);
+        ProductDT productDt = productDtRepository.findById(productDtNo).orElseThrow(() -> new NoSuchElementException("단품 정보를 찾을 수 없습니다."));
+        return new ProductDtDTO.Response(productDt);
     }
 
     @Transactional
