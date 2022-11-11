@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class ProductPrice {
     private Long productPriceNo;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @UniqueElements
     private LocalDateTime applyDate;
 
     @Column(nullable = false, length = 100)

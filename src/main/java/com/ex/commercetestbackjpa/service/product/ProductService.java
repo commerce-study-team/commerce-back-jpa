@@ -103,6 +103,7 @@ public class ProductService {
             ProductDT productDt = productDtRepository.findById(productDTRequestDto.getProductDtNo()).orElseThrow(() -> new NoSuchElementException("단품 정보를 찾을 수 없습니다."));
             productDt.updateColor(productDTRequestDto.getColorCode(), productDTRequestDto.getColorName());
             productDt.updateSize(productDTRequestDto.getSizeCode(), productDTRequestDto.getSizeName());
+            productDt.updateSaleFlag(productDTRequestDto.getSaleFlag());
         }
 
         return productNo;
