@@ -81,7 +81,7 @@ public class ProductServiceTest {
 
     @Test
     void 단일상품검색() {
-        ProductDTO.Response productResponseDto = productService.findProductByProductNo(6L);
+        ProductDTO.Response productResponseDto = productService.findProductByProductNo(1L);
         List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
         ProductPriceDTO.Response productPriceResponseDto = productResponseDto.getProductPriceResponseDto();
 

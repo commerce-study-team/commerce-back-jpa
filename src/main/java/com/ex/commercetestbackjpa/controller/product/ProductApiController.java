@@ -33,7 +33,7 @@ public class ProductApiController {
         return productService.findProductByProductNo(productNo);
     }
 
-    @ApiOperation(value = "상품 조회 메소드")
+    @ApiOperation(value = "상품 List 조회 메소드")
     @GetMapping(value = {"/", "/{option}/{filterValue}"})
     public Map<String, Object> findProductByOptions (@PathVariable String option, @PathVariable String filterValue) {
         return productService.findProductByOptions(option, filterValue);
@@ -46,10 +46,18 @@ public class ProductApiController {
     }
 
     @ApiOperation(value = "단품 변경 메소드")
-    @PatchMapping("/{productNo}/dt/update")
+    @PatchMapping("/{productNo}/dt")
     public Long updateProductDtColor(@RequestBody @Valid List<ProductDtDTO.Request> productDTRequestDtoList, @PathVariable Long productNo) {
         return productService.updateProductDt(productDTRequestDtoList, productNo);
     }
+
+    @ApiOperation(value = "가격 저장 메소드")
+    @PostMapping("/{productNo}/price")
+    public Long saveProductPrice(@RequestBody @Valid List<ProductPriceDTO.Request> productPriceRequestDtoList, @PathVariable Long productNo) {
+        return productService.saveProductPrice(productPriceRequestDtoList, productNo);
+    }
+
+
 
     @ApiOperation(value = "가격 변경 메소드")
     @PatchMapping("/{productNo}/price")

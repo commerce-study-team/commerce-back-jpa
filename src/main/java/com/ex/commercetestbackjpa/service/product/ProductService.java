@@ -75,8 +75,6 @@ public class ProductService {
                 productList = productRepository.findAll();
         }
 
-
-
         for(Product product : productList) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
             productResponseDto.addProductDtList(product);
@@ -117,6 +115,16 @@ public class ProductService {
     }
 
     @Transactional
+    public Long saveProductPrice(List<ProductPriceDTO.Request> productPriceRequestDtoList, Long productNo) {
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
+        for(ProductPriceDTO.Request productPriceDto : productPriceRequestDtoList) {
+            productPriceRepository.save(productPriceDto.toEntity(product));
+        }
+
+        return product.getProductNo();
+    }
+
+    @Transactional
     public Long updateProductPrice(List<ProductPriceDTO.Request> productPriceRequestDtoList, Long productNo) {
 
         for(ProductPriceDTO.Request productPriceDto : productPriceRequestDtoList) {
@@ -128,6 +136,4 @@ public class ProductService {
 
         return productNo;
     }
-
-
 }
