@@ -1,10 +1,12 @@
 package com.ex.commercetestbackjpa.service.product;
 
+import com.ex.commercetestbackjpa.config.util.FileUploadUtil;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
 import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
+import com.ex.commercetestbackjpa.repository.product.ProductImageRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.*;
 
 @Slf4j
@@ -25,6 +28,8 @@ public class ProductService {
 
     private final ProductPriceRepository productPriceRepository;
 
+    private final ProductImageRepository productImageRepository;
+
     /**
      * 상품 저장
      * @param productRequestDto
@@ -35,11 +40,20 @@ public class ProductService {
         Product product = productRequestDto.toEntity();
         List<ProductDtDTO.Request> productDTRequestDtoList = productRequestDto.getProductDtRequestDtoList();
         List<ProductPriceDTO.Request> productPriceRequestDtoList = productRequestDto.getProductPriceRequestDtoList();
+        List<ProductImageDTO.Request> productImageRequestDtoList = productRequestDto.getProductImageRequestDtoList();
 
         Long productNo = productRepository.save(product).getProductNo();
 
+        // 단품 저장
         this.saveProductDt(productDTRequestDtoList, productNo);
+
+        // 가격 저장
         this.saveProductPrice(productPriceRequestDtoList, productNo);
+
+        // 이미지는 필수가 아니기 때문에 데이터 있을 때 저장
+        if(productImageRequestDtoList != null) {
+            this.saveProductImage(productImageRequestDtoList, productNo);
+        }
 
         return productNo;
     }
@@ -53,8 +67,15 @@ public class ProductService {
     public ProductDTO.Response findProductByProductNo(Long productNo) {
             Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
+            
+            // 단품 조회
             productResponseDto.addProductDtList(product);
+            
+            // 가격 조회
             productResponseDto.findProductPrice(product);
+            
+            // 이미지 조회
+            productResponseDto.addProductImageList(product);
 
         return productResponseDto;
     }
@@ -90,8 +111,15 @@ public class ProductService {
 
         for(Product product : productList) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
+
+            // 단품 조회
             productResponseDto.addProductDtList(product);
+
+            // 가격 조회
             productResponseDto.findProductPrice(product);
+
+            // 이미지 조회
+            productResponseDto.addProductImageList(product);
             list.add(productResponseDto);
         }
 
@@ -194,6 +222,24 @@ public class ProductService {
             productPrice.updateSalePrice(productPriceDto.getSalePrice());
             productPrice.updateCostPrice(productPriceDto.getCostPrice());
             productPrice.updateUseYn(productPriceDto.getUseYn());
+        }
+
+        return productNo;
+    }
+
+    /**
+     * 상품 이미지 저장
+     * @param productImageRequestDtoList
+     * @param productNo
+     * @return Long
+     */
+    @Transactional
+    public Long saveProductImage(List<ProductImageDTO.Request> productImageRequestDtoList, Long productNo) {
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
+
+        for(ProductImageDTO.Request productImageRequestDto : productImageRequestDtoList) {
+            String imageRealName = FileUploadUtil.uploadFile(productImageRequestDto.getImgFile());
+            productImageRepository.save(productImageRequestDto.toEntity(product, imageRealName));
         }
 
         return productNo;

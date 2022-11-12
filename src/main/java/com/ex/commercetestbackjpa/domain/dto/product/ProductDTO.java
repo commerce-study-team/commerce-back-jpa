@@ -2,8 +2,10 @@ package com.ex.commercetestbackjpa.domain.dto.product;
 
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -47,6 +49,8 @@ public class ProductDTO {
         @NotBlank(message = "가격정보는 필수 입력값입니다.")
         private List<ProductPriceDTO.Request> productPriceRequestDtoList;
 
+        private List<ProductImageDTO.Request> productImageRequestDtoList;
+
         public Product toEntity() {
 
             return Product.builder()
@@ -83,6 +87,8 @@ public class ProductDTO {
         private List<ProductDtDTO.Response> productDtResponseDtoList = new ArrayList<>();
 
         private List<ProductPriceDTO.Response> productPriceResponseDtoList = new ArrayList<>();
+
+        private List<ProductImageDTO.Response> productImageResponseDtoList = new ArrayList<>();
 
         public Response (Product product) {
             this.productNo = product.getProductNo();
@@ -125,6 +131,15 @@ public class ProductDTO {
                     .orElseThrow(() -> new NoSuchElementException("가격 정보를 찾을 수 없습니다."));
 
             this.productPriceResponseDto =  new ProductPriceDTO.Response(productPrice);
+        }
+
+        public void addProductImageList(Product product) {
+            List<ProductImage> productPriceList = product.getProductImageList();
+
+            // 가격 add
+            for (ProductImage productImage : productPriceList) {
+                productImageResponseDtoList.add(new ProductImageDTO.Response(productImage));
+            }
         }
     }
 

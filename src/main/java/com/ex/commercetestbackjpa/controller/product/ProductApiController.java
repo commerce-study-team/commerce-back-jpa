@@ -2,12 +2,14 @@ package com.ex.commercetestbackjpa.controller.product;
 
 import com.ex.commercetestbackjpa.domain.dto.product.ProductDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductDtDTO;
+import com.ex.commercetestbackjpa.domain.dto.product.ProductImageDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductPriceDTO;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -68,5 +70,12 @@ public class ProductApiController {
     @PatchMapping("/{productNo}/price")
     public Long updateProductPrice(@RequestBody @Valid List<ProductPriceDTO.Request> productPriceRequestDtoList, @PathVariable Long productNo) {
         return productService.updateProductPrice(productPriceRequestDtoList, productNo);
+    }
+
+    @ApiOperation(value = "상품 이미지 추가")
+    @PostMapping("/image")
+    public Long uploadProductImage(@RequestBody @Valid List<ProductImageDTO.Request> productImageRequestDtoList, @PathVariable Long productNo) {
+
+        return productService.saveProductImage(productImageRequestDtoList, productNo);
     }
 }

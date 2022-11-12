@@ -4,12 +4,9 @@ import com.ex.commercetestbackjpa.config.exception.dto.ExceptionResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.security.Provider;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
@@ -41,7 +38,7 @@ public class GlobalExceptionHandler {
         ExceptionResponseDTO exceptionDTO = ExceptionResponseDTO.builder()
                                             .code("Item not found!!!")
                                             .massage(e.getMessage()).build();
-        log.error("찍힘!!!!!!!!!!");
+        log.error(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionDTO);
     }

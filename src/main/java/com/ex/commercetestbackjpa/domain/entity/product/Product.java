@@ -61,6 +61,10 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     private List<ProductPrice> productPriceList = new ArrayList<>();
 
+    @BatchSize(size=10)
+    @OneToMany(mappedBy = "product")
+    private List<ProductImage> productImageList = new ArrayList<>();
+
     @Builder
     private Product (String productName, String lgroup, String mgroup, String sgroup, String keyword) {
 
