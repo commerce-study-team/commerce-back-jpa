@@ -32,6 +32,6 @@ public abstract class BaseEntity {
 
     @LastModifiedDate
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime modifiedDtm;
+    private LocalDateTime modifiedDtm;  
 
 }
