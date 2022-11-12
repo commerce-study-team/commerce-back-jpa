@@ -8,11 +8,13 @@ import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -23,6 +25,11 @@ public class ProductService {
 
     private final ProductPriceRepository productPriceRepository;
 
+    /**
+     * 상품 저장
+     * @param productRequestDto
+     * @return Long
+     */
     @Transactional
     public Long saveProduct(ProductDTO.Request productRequestDto) {
         Product product = productRequestDto.toEntity();
@@ -31,27 +38,33 @@ public class ProductService {
 
         Long productNo = productRepository.save(product).getProductNo();
 
-        for(ProductDtDTO.Request productDTRequestDto : productDTRequestDtoList) {
-            productDtRepository.save(productDTRequestDto.toEntity(product));
-        }
-
-        for(ProductPriceDTO.Request productPriceRequestDto : productPriceRequestDtoList) {
-            productPriceRepository.save(productPriceRequestDto.toEntity(product));
-        }
+        this.saveProductDt(productDTRequestDtoList, productNo);
+        this.saveProductPrice(productPriceRequestDtoList, productNo);
 
         return productNo;
     }
 
+    /**
+     * 단일 상품 조회
+     * @param productNo
+     * @return ProductDTO.Response
+     */
     @Transactional
     public ProductDTO.Response findProductByProductNo(Long productNo) {
-        Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
-        ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
-        productResponseDto.addProductDtList(product);
-        productResponseDto.findProductPrice(product);
+            Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
+            ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
+            productResponseDto.addProductDtList(product);
+            productResponseDto.findProductPrice(product);
 
         return productResponseDto;
     }
 
+    /**
+     * 상품 List 조회
+     * @param option
+     * @param filterValue
+     * @return Map<String, Object>
+     */
     @Transactional
     public Map<String, Object> findProductByOptions(String option, String filterValue) {
         Map<String, Object> result = new HashMap<>();
@@ -86,6 +99,11 @@ public class ProductService {
         return result;
     }
 
+    /**
+     * 상품 변경
+     * @param productRequestDto
+     * @return Long
+     */
     @Transactional
     public Long updateProduct(ProductDTO.Request productRequestDto) {
         Product product = productRepository.findById(productRequestDto.getProductNo()).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
@@ -100,9 +118,16 @@ public class ProductService {
         return product.getProductNo();
     }
 
+    /**
+     * 단품 저장
+     * @param productDTRequestDtoList
+     * @param productNo
+     * @return Long
+     */
     @Transactional
     public Long saveProductDt(List<ProductDtDTO.Request> productDTRequestDtoList, Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
+
         for(ProductDtDTO.Request productDtDto : productDTRequestDtoList) {
             productDtRepository.save(productDtDto.toEntity(product));
         }
@@ -110,6 +135,12 @@ public class ProductService {
         return productNo;
     }
 
+    /**
+     * 단품 변경
+     * @param productDTRequestDtoList
+     * @param productNo
+     * @return Long
+     */
     @Transactional
     public Long updateProductDt(List<ProductDtDTO.Request> productDTRequestDtoList, Long productNo) {
         for(ProductDtDTO.Request productDTRequestDto : productDTRequestDtoList) {
@@ -122,11 +153,22 @@ public class ProductService {
         return productNo;
     }
 
+    /**
+     * 단품 조회
+     * @param productDtNo
+     * @return ProductDtDTO.Response
+     */
     public ProductDtDTO.Response findProductDtByProductDtNo(Long productDtNo) {
         ProductDT productDt = productDtRepository.findById(productDtNo).orElseThrow(() -> new NoSuchElementException("단품 정보를 찾을 수 없습니다."));
         return new ProductDtDTO.Response(productDt);
     }
 
+    /**
+     * 가격 저장
+     * @param productPriceRequestDtoList
+     * @param productNo
+     * @return Long
+     */
     @Transactional
     public Long saveProductPrice(List<ProductPriceDTO.Request> productPriceRequestDtoList, Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
@@ -137,6 +179,13 @@ public class ProductService {
         return product.getProductNo();
     }
 
+
+    /**
+     * 가격 변경
+     * @param productPriceRequestDtoList
+     * @param productNo
+     * @return
+     */
     @Transactional
     public Long updateProductPrice(List<ProductPriceDTO.Request> productPriceRequestDtoList, Long productNo) {
 
