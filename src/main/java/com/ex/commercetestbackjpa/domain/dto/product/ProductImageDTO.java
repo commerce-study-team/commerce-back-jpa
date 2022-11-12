@@ -32,10 +32,10 @@ public class ProductImageDTO {
 
         private MultipartFile imgFile;
 
-        public ProductImage toEntity(Product product, String imageRealName) {
+        public ProductImage toEntity(Product product, String imageName) {
             return ProductImage.builder()
-                    .imageRealName(imageRealName)
-                    .imageName(this.imageName)
+                    .imageRealName(this.imageRealName)
+                    .imageName(imageName)
                     .product(product)
                     .build();
         }

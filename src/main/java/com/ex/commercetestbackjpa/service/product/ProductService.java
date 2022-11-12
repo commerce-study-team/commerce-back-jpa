@@ -238,8 +238,8 @@ public class ProductService {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
 
         for(ProductImageDTO.Request productImageRequestDto : productImageRequestDtoList) {
-            String imageRealName = FileUploadUtil.uploadFile(productImageRequestDto.getImgFile());
-            productImageRepository.save(productImageRequestDto.toEntity(product, imageRealName));
+            String imageName = FileUploadUtil.uploadFile(productImageRequestDto.getImgFile());
+            productImageRepository.save(productImageRequestDto.toEntity(product, imageName));
         }
 
         return productNo;

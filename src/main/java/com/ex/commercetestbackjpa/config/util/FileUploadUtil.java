@@ -10,7 +10,6 @@ public class FileUploadUtil {
 
     public static String uploadFile(MultipartFile file) {
         UUID uuid = UUID.randomUUID();
-        String imageName = file.getOriginalFilename();
         String imageFileName = uuid + file.getOriginalFilename();
         String path = "C:/projects/upload/image/";
 

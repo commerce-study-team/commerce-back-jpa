@@ -5,12 +5,14 @@ import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,10 +24,11 @@ public class ProductServiceTest {
     ProductService productService;
 
     @Test
-    public void 상품저장() {
+    public void 상품저장() throws IOException {
         ProductDTO.Request productRequestDto = new ProductDTO.Request();
         List<ProductDtDTO.Request> productDTRequestDtoList = new ArrayList<>();
         List<ProductPriceDTO.Request> productPriceRequestDtoList = new ArrayList<>();
+        List<ProductImageDTO.Request> productImageRequestDtoList = new ArrayList<>();
 
         // 상품 데이터
         productRequestDto.setProductName("테스트 상품");
@@ -71,8 +74,26 @@ public class ProductServiceTest {
         productPriceRequestDtoList.add(productPriceRequestDto1);
         productPriceRequestDtoList.add(productPriceRequestDto2);
 
+        // 이미지 데이터 -- MockObject 생성
+        ProductImageDTO.Request productImageRequestDto = new ProductImageDTO.Request();
+        productImageRequestDto.setImageRealName("테스트.png");
+
+        String filePath = "src/test/resources/testImage/test.png";
+        MockMultipartFile multipartFile = new MockMultipartFile("image",
+                "테스트.png", "image/png",
+                new FileInputStream(filePath));
+
+
+        UUID uuid = UUID.randomUUID();
+        productImageRequestDto.setImageName(uuid + "테스트.png");
+        productImageRequestDto.setImgFile(multipartFile);
+
+        productImageRequestDtoList.add(productImageRequestDto);
+        // 이미지 데이터 END
+
         productRequestDto.setProductDtRequestDtoList(productDTRequestDtoList);
         productRequestDto.setProductPriceRequestDtoList(productPriceRequestDtoList);
+        productRequestDto.setProductImageRequestDtoList(productImageRequestDtoList);
 
         productService.saveProduct(productRequestDto);
     }
