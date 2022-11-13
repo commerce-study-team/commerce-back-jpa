@@ -120,6 +120,7 @@ public class ProductService {
 
             // 이미지 조회
             productResponseDto.addProductImageList(product);
+
             list.add(productResponseDto);
         }
 

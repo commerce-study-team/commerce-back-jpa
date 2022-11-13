@@ -73,9 +73,11 @@ public class ProductApiController {
     }
 
     @ApiOperation(value = "상품 이미지 추가")
-    @PostMapping("/image")
+    @PostMapping("/{productNo}/image")
     public Long uploadProductImage(@RequestBody @Valid List<ProductImageDTO.Request> productImageRequestDtoList, @PathVariable Long productNo) {
 
         return productService.saveProductImage(productImageRequestDtoList, productNo);
     }
+
+    //상품 이미지 삭제 처리 추가 todo
 }
