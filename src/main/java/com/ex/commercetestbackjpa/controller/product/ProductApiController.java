@@ -8,8 +8,10 @@ import com.ex.commercetestbackjpa.service.product.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.web.PageableDefault;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -43,9 +45,9 @@ public class ProductApiController {
     }
 
     @ApiOperation(value = "상품 List 조회")
-    @GetMapping(value = {"/", "/{option}/{filterValue}"})
-    public Map<String, Object> findProductByOptions (@PathVariable String option, @PathVariable String filterValue) {
-        return productService.findProductByOptions(option, filterValue);
+    @GetMapping(value = {"/", "/filter"})
+    public Map<String, Object> findProductByFilters (@RequestBody @Valid ProductDTO.Request productRequestDto, @PageableDefault(size=10, sort="productNo", direction = Sort.Direction.DESC) Pageable pageable) {
+        return productService.findProductByFilters(productRequestDto, pageable);
     }
 
     @ApiOperation(value = "단품 저장")

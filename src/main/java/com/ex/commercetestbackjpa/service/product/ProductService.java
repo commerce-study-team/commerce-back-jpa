@@ -11,10 +11,11 @@ import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.util.*;
 
 @Slf4j
@@ -82,34 +83,17 @@ public class ProductService {
 
     /**
      * 상품 List 조회
-     * @param option
-     * @param filterValue
+     * @param productRequestDto
+     * @param pageable
      * @return Map<String, Object>
      */
     @Transactional
-    public Map<String, Object> findProductByOptions(String option, String filterValue) {
+    public Map<String, Object> findProductByFilters(ProductDTO.Request productRequestDto, Pageable pageable) {
         Map<String, Object> result = new HashMap<>();
         List<ProductDTO.Response> list = new ArrayList<>();
-        List<Product> productList = null;
+        Page<Product> productList = productRepository.findByFilters(productRequestDto, pageable);
 
-        switch (option) {
-            case "keyword" :
-                productList = productRepository.findByKeyword(filterValue);
-                break;
-            case "productName" :
-                productList = productRepository.findByProductName(filterValue);
-                break;
-            case "saleFlag" :
-                productList = productRepository.findBySaleFlag(filterValue);
-                break;
-            case "signFlag" :
-                productList = productRepository.findBySignFlag(filterValue);
-                break;
-            default:
-                productList = productRepository.findAll();
-        }
-
-        for(Product product : productList) {
+        for(Product product : productList.getContent()) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
 
             // 단품 조회

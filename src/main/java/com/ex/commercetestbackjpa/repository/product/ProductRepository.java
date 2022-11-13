@@ -7,14 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
-
-    List<Product> findByProductName(String ProductName);
-
-    List<Product> findByKeyword(String keyword);
-
-    List<Product> findBySaleFlag(String saleFlag);
-
-    List<Product> findBySignFlag(String signFlag);
+public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom{
 
 }

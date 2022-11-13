@@ -5,6 +5,9 @@ import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.FileInputStream;
@@ -136,7 +139,13 @@ public class ProductServiceTest {
 
     @Test
     void 키워드검색() {
-        Map<String, Object> map = productService.findProductByOptions("Keyword", "테스트");
+        ProductDTO.Request productRequestDto = new ProductDTO.Request();
+        productRequestDto.setKeyword("테스트");
+        //productRequestDto.setSaleFlag("00");
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "productNo");
+
+        Map<String, Object> map = productService.findProductByFilters(productRequestDto, pageable);
 
         List<ProductDTO.Response> list = (List<ProductDTO.Response>) map.get("RESULT");
 
@@ -149,7 +158,9 @@ public class ProductServiceTest {
 
     @Test
     void 전체상품검색() {
-        Map<String, Object> map = productService.findProductByOptions("", "");
+        Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "productNo");
+        ProductDTO.Request productRequestDto = new ProductDTO.Request();
+        Map<String, Object> map = productService.findProductByFilters(productRequestDto, pageable);
 
         List<ProductDTO.Response> list = (List<ProductDTO.Response>) map.get("RESULT");
 

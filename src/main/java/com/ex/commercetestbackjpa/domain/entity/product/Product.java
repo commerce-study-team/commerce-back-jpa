@@ -35,7 +35,7 @@ public class Product extends BaseEntity {
     private String sgroup;
 
     @Column(nullable = false, length = 2)
-    @ColumnDefault("00")
+    @ColumnDefault("'00'")
     private String saleFlag;
 
     @Column(nullable = false, length = 500)
@@ -50,7 +50,7 @@ public class Product extends BaseEntity {
     private long commentCount;
 
     @Column(nullable = false, length = 2)
-    @ColumnDefault("00")
+    @ColumnDefault("'00'")
     private String signFlag;
 
     @BatchSize(size=10)
