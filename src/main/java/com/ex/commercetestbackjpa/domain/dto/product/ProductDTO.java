@@ -84,11 +84,11 @@ public class ProductDTO {
 
         private ProductPriceDTO.Response productPriceResponseDto;
 
-        private List<ProductDtDTO.Response> productDtResponseDtoList = new ArrayList<>();
+        private List<ProductDtDTO.Response> productDtResponseDtoList;
 
-        private List<ProductPriceDTO.Response> productPriceResponseDtoList = new ArrayList<>();
+        private List<ProductPriceDTO.Response> productPriceResponseDtoList;
 
-        private List<ProductImageDTO.Response> productImageResponseDtoList = new ArrayList<>();
+        private List<ProductImageDTO.Response> productImageResponseDtoList;
 
         public Response (Product product) {
             this.productNo = product.getProductNo();
@@ -104,6 +104,7 @@ public class ProductDTO {
         }
 
         public void addProductDtList(Product product) {
+            this.productDtResponseDtoList = new ArrayList<>();
             List<ProductDT> productDTList = product.getProductDtList();
 
             // 단품 add
@@ -113,6 +114,7 @@ public class ProductDTO {
         }
 
         public void addProductPriceList(Product product) {
+            this.productPriceResponseDtoList = new ArrayList<>();
             List<ProductPrice> productPriceList = product.getProductPriceList();
 
             // 가격 add
@@ -134,6 +136,7 @@ public class ProductDTO {
         }
 
         public void addProductImageList(Product product) {
+            this.productImageResponseDtoList = new ArrayList<>();
             List<ProductImage> productPriceList = product.getProductImageList();
 
             // 가격 add
