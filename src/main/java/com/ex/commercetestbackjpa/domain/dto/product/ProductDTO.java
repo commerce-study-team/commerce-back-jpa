@@ -102,48 +102,6 @@ public class ProductDTO {
             this.maxBuy = product.getMaxBuy();
             this.commentCount = product.getCommentCount();
         }
-
-        public void addProductDtList(Product product) {
-            this.productDtResponseDtoList = new ArrayList<>();
-            List<ProductDT> productDTList = product.getProductDtList();
-
-            // 단품 add
-            for (ProductDT productDT : productDTList) {
-                productDtResponseDtoList.add(new ProductDtDTO.Response(productDT));
-            }
-        }
-
-        public void addProductPriceList(Product product) {
-            this.productPriceResponseDtoList = new ArrayList<>();
-            List<ProductPrice> productPriceList = product.getProductPriceList();
-
-            // 가격 add
-            for (ProductPrice productPrice : productPriceList) {
-                productPriceResponseDtoList.add(new ProductPriceDTO.Response(productPrice));
-            }
-        }
-
-        public void findProductPrice (Product product) {
-            List<ProductPrice> productPriceList = product.getProductPriceList();
-
-            ProductPrice productPrice = productPriceList.stream()
-                    .filter(n -> n.getUseYn() == true)
-                    .filter(n -> n.getApplyDate().isBefore(LocalDateTime.now()))
-                    .max(Comparator.comparing(ProductPrice::getApplyDate))
-                    .orElseThrow(() -> new NoSuchElementException("가격 정보를 찾을 수 없습니다."));
-
-            this.productPriceResponseDto =  new ProductPriceDTO.Response(productPrice);
-        }
-
-        public void addProductImageList(Product product) {
-            this.productImageResponseDtoList = new ArrayList<>();
-            List<ProductImage> productPriceList = product.getProductImageList();
-
-            // 가격 add
-            for (ProductImage productImage : productPriceList) {
-                productImageResponseDtoList.add(new ProductImageDTO.Response(productImage));
-            }
-        }
     }
 
 }

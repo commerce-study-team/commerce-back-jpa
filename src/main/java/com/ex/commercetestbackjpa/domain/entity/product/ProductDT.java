@@ -59,6 +59,10 @@ public class ProductDT {
         this.product = product;
     }
 
+    public void settingProduct(Product product) {
+        this.product = product;
+    }
+
     public void updateProductDtName (String productDtName) {
         this.productDtName = productDtName;
 

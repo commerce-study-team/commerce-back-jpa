@@ -47,6 +47,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+// yml sumModule Run
 task copyPrivate(type: Copy) {
     copy {
         from './commerce-back-jpa-submodule'

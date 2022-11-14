@@ -29,12 +29,11 @@ public class ProductPriceDTO {
 
         private Boolean useYn;
 
-        public ProductPrice toEntity(Product product) {
+        public ProductPrice toEntity() {
             return ProductPrice.builder()
                     .applyDate(this.applyDate)
                     .salePrice(this.salePrice)
                     .costPrice(this.costPrice)
-                    .product(product)
                     .build();
         }
     }

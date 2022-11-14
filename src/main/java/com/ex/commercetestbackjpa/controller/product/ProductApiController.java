@@ -26,13 +26,13 @@ public class ProductApiController {
     private final ProductService productService;
 
     @ApiOperation(value = "상품 저장")
-    @PostMapping("/")
+    @PostMapping("")
     public Long saveProduct (@RequestBody @Valid ProductDTO.Request productRequestDto) {
         return productService.saveProduct(productRequestDto);
     }
 
     @ApiOperation(value = "상품 정보 변경")
-    @PatchMapping("/")
+    @PatchMapping("")
     public Long updateProduct (@RequestBody @Valid ProductDTO.Request productRequestDto) {
         return productService.updateProduct(productRequestDto);
     }
@@ -44,9 +44,11 @@ public class ProductApiController {
     }
 
     @ApiOperation(value = "상품 List 조회")
-    @GetMapping(value = {"/", "/filter"})
-    public Map<String, Object> findProductByFilters (@RequestBody @Valid ProductDTO.Request productRequestDto, @PageableDefault(size=10, sort="productNo", direction = Sort.Direction.DESC) Pageable pageable) {
-        return productService.findProductByFilters(productRequestDto, pageable);
+    @GetMapping("")
+    public Map<String, Object> findProductByFilters (@RequestParam Map<String, String> filterMap,
+                                                     @PageableDefault(size=10, sort="productNo", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        return productService.findProductByFilters(filterMap, pageable);
     }
 
     @ApiOperation(value = "단품 저장")

@@ -30,7 +30,7 @@ public class ProductDtDTO {
 
         private String image;
 
-        public ProductDT toEntity(Product product) {
+        public ProductDT toEntity() {
             return ProductDT.builder()
                     .productDtName(this.productDtName)
                     .colorCode(this.colorCode)
@@ -38,7 +38,6 @@ public class ProductDtDTO {
                     .sizeCode(this.sizeCode)
                     .sizeName(this.sizeName)
                     .image(this.image)
-                    .product(product)
                     .build();
         }
     }

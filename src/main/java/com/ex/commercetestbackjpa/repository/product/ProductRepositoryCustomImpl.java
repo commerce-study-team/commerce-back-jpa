@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -21,18 +22,18 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Product> findByFilters(ProductDTO.Request productRequstDto, Pageable pageable) {
+    public Page<Product> findByFilters(Map<String, String> filterMap, Pageable pageable) {
 
         List<Product> productList = queryFactory
                 .selectFrom(product)
                 .where(
-                        condition(productRequstDto.getKeyword(), product.keyword::contains),
-                        condition(productRequstDto.getProductName(), product.productName::contains),
-                        condition(productRequstDto.getLgroup(), product.lgroup::eq),
-                        condition(productRequstDto.getMgroup(), product.mgroup::eq),
-                        condition(productRequstDto.getSgroup(), product.sgroup::eq),
-                        condition(productRequstDto.getSaleFlag(), product.saleFlag::eq),
-                        condition(productRequstDto.getSignFlag(), product.signFlag::eq)
+                        condition(filterMap.getOrDefault("productName", null), product.productName::contains),
+                        condition(filterMap.getOrDefault("keyword", null), product.keyword::contains),
+                        condition(filterMap.getOrDefault("lgroup", null), product.lgroup::eq),
+                        condition(filterMap.getOrDefault("mgroup", null), product.mgroup::eq),
+                        condition(filterMap.getOrDefault("sgroup", null), product.sgroup::eq),
+                        condition(filterMap.getOrDefault("saleFlag", null), product.saleFlag::eq),
+                        condition(filterMap.getOrDefault("signFlag", null), product.signFlag::eq)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

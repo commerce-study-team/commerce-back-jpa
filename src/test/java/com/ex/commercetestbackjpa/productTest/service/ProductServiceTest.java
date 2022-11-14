@@ -139,13 +139,12 @@ public class ProductServiceTest {
 
     @Test
     void 키워드검색() {
-        ProductDTO.Request productRequestDto = new ProductDTO.Request();
-        productRequestDto.setKeyword("테스트");
-        //productRequestDto.setSaleFlag("00");
+        Map<String, String> filterMap = new HashMap<>();
 
+        filterMap.put("keyword", "테스트");
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "productNo");
 
-        Map<String, Object> map = productService.findProductByFilters(productRequestDto, pageable);
+        Map<String, Object> map = productService.findProductByFilters(filterMap, pageable);
 
         List<ProductDTO.Response> list = (List<ProductDTO.Response>) map.get("RESULT");
 
@@ -153,14 +152,16 @@ public class ProductServiceTest {
             assertThat(pr.getKeyword()).isEqualTo("테스트");
             assertThat(pr.getProductDtResponseDtoList().get(0).getProductDtNo()).isNotNull();
             assertThat(pr.getProductPriceResponseDto().getProductPriceNo()).isNotNull();
+            System.out.println(pr.getProductNo());
         }
     }
 
     @Test
     void 전체상품검색() {
+        Map<String, String> filterMap = new HashMap<>();
+
         Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "productNo");
-        ProductDTO.Request productRequestDto = new ProductDTO.Request();
-        Map<String, Object> map = productService.findProductByFilters(productRequestDto, pageable);
+        Map<String, Object> map = productService.findProductByFilters(filterMap, pageable);
 
         List<ProductDTO.Response> list = (List<ProductDTO.Response>) map.get("RESULT");
 
@@ -189,7 +190,7 @@ public class ProductServiceTest {
         productDTRequestDtoList.add(productDTRequestDto1);
         productDTRequestDtoList.add(productDTRequestDto2);
 
-        Long productNo = productService.saveProductDt(productDTRequestDtoList, 1L);
+        Long productNo = productService.saveProductDt(productDTRequestDtoList, 111L);
 
         ProductDTO.Response productResponseDto = productService.findProductByProductNo(1L);
         List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();

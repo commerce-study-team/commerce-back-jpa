@@ -4,6 +4,7 @@ import com.ex.commercetestbackjpa.config.util.FileUploadUtil;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
 import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductImageRepository;
@@ -16,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -64,46 +67,65 @@ public class ProductService {
      * @param productNo
      * @return ProductDTO.Response
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public ProductDTO.Response findProductByProductNo(Long productNo) {
             Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
-            
-            // 단품 조회
-            productResponseDto.addProductDtList(product);
-            
-            // 가격 조회
-            productResponseDto.findProductPrice(product);
-            
-            // 이미지 조회
-            productResponseDto.addProductImageList(product);
+
+            productResponseDto.setProductDtResponseDtoList(
+                    product.getProductDtList().stream().map(n -> new ProductDtDTO.Response(n)).collect(Collectors.toList())
+            );
+
+            productResponseDto.setProductPriceResponseDto(
+                    new ProductPriceDTO.Response((product.getProductPriceList().stream()
+                    .filter(n -> n.getUseYn() == true)
+                    .filter(n -> n.getApplyDate().isBefore(LocalDateTime.now()))
+                    .max(Comparator.comparing(ProductPrice::getApplyDate))
+                    .orElseThrow(() -> new NoSuchElementException("가격 정보를 찾을 수 없습니다."))))
+            );
+
+
+            productResponseDto.setProductImageResponseDtoList(
+                    product.getProductImageList().stream().map(n -> new ProductImageDTO.Response(n)).collect(Collectors.toList())
+            );
 
         return productResponseDto;
     }
 
     /**
      * 상품 List 조회
-     * @param productRequestDto
+     * @param filterMap
      * @param pageable
      * @return Map<String, Object>
      */
-    @Transactional
-    public Map<String, Object> findProductByFilters(ProductDTO.Request productRequestDto, Pageable pageable) {
+    @Transactional(readOnly = true)
+    public Map<String, Object> findProductByFilters(Map<String, String> filterMap, Pageable pageable) {
+
         Map<String, Object> result = new HashMap<>();
         List<ProductDTO.Response> list = new ArrayList<>();
-        Page<Product> productList = productRepository.findByFilters(productRequestDto, pageable);
+        Page<Product> productList = productRepository.findByFilters(filterMap, pageable);
 
         for(Product product : productList.getContent()) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
 
-            // 단품 조회
-            productResponseDto.addProductDtList(product);
+            // 단품
+            productResponseDto.setProductDtResponseDtoList(
+                    product.getProductDtList().stream().map(n -> new ProductDtDTO.Response(n)).collect(Collectors.toList())
+            );
 
-            // 가격 조회
-            productResponseDto.findProductPrice(product);
+            // 가격
+            productResponseDto.setProductPriceResponseDto(
+                    new ProductPriceDTO.Response((product.getProductPriceList().stream()
+                            .filter(n -> n.getUseYn() == true)
+                            .filter(n -> n.getApplyDate().isBefore(LocalDateTime.now()))
+                            .max(Comparator.comparing(ProductPrice::getApplyDate))
+                            .orElseThrow(() -> new NoSuchElementException("가격 정보를 찾을 수 없습니다."))))
+            );
 
-            // 이미지 조회
-            productResponseDto.addProductImageList(product);
+            // 이미지
+            productResponseDto.setProductImageResponseDtoList(
+                    product.getProductImageList().stream().map(n -> new ProductImageDTO.Response(n)).collect(Collectors.toList())
+            );
 
             list.add(productResponseDto);
         }
@@ -142,7 +164,9 @@ public class ProductService {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
 
         for(ProductDtDTO.Request productDtDto : productDTRequestDtoList) {
-            productDtRepository.save(productDtDto.toEntity(product));
+            ProductDT productDt = productDtDto.toEntity();
+            productDt.settingProduct(product);
+            productDtRepository.save(productDt);
         }
 
         return productNo;
@@ -186,7 +210,9 @@ public class ProductService {
     public Long saveProductPrice(List<ProductPriceDTO.Request> productPriceRequestDtoList, Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
         for(ProductPriceDTO.Request productPriceDto : productPriceRequestDtoList) {
-            productPriceRepository.save(productPriceDto.toEntity(product));
+            ProductPrice productPrice = productPriceDto.toEntity();
+            productPrice.settingProduct(product);
+            productPriceRepository.save(productPrice);
         }
 
         return product.getProductNo();
@@ -224,7 +250,10 @@ public class ProductService {
 
         for(ProductImageDTO.Request productImageRequestDto : productImageRequestDtoList) {
             String imageName = FileUploadUtil.uploadFile(productImageRequestDto.getImgFile());
-            productImageRepository.save(productImageRequestDto.toEntity(product, imageName));
+            ProductImage productImage = productImageRequestDto.toEntity();
+            productImage.settingProduct(product);
+            productImage.settingImageName(imageName);
+            productImageRepository.save(productImage);
         }
 
         return productNo;

@@ -50,6 +50,10 @@ public class ProductPrice {
         this.product = product;
     }
 
+    public void settingProduct(Product product) {
+        this.product = product;
+    }
+
     public void updateSalePrice(Long salePrice) {
         this.salePrice = salePrice;
         this.margin = salePrice - this.costPrice;

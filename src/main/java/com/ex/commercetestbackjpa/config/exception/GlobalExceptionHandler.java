@@ -43,10 +43,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionDTO);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ExceptionResponseDTO> ExceptionHandler(RuntimeException e) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponseDTO> ExceptionHandler(Exception e) {
         ExceptionResponseDTO exceptionDTO = ExceptionResponseDTO.builder()
-                                            .code("Exception!!!")
+                                            .code("죄송합니다. 서비스에 장애가 발생하였습니다.")
                                             .massage(e.getMessage()).build();
         log.error(e.getMessage());
 

@@ -38,6 +38,14 @@ public class ProductImage {
         this.product = product;
     }
 
+    public void settingProduct(Product product) {
+        this.product = product;
+    }
+
+    public void settingImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
     public void updateImageName(String imageName, String imageRealName) {
         this.imageName = imageName;
         this.imageRealName = imageRealName;
