@@ -6,6 +6,8 @@ import com.ex.commercetestbackjpa.domain.dto.product.ProductImageDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductPriceDTO;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,8 @@ import org.springframework.data.web.PageableDefault;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+
+import static com.ex.commercetestbackjpa.domain.entity.product.QProduct.product;
 
 @Api(tags = {"상품조회 및 저장 Controller"})
 @RestController
@@ -37,15 +41,19 @@ public class ProductApiController {
         return productService.updateProduct(productRequestDto);
     }
 
-    @ApiOperation(value = "상품 단일 조회")
-    @GetMapping("/{productNo}")
-    public ProductDTO.Response findProductByProductNo (@PathVariable Long productNo) {
-        return productService.findProductByProductNo(productNo);
-    }
-
     @ApiOperation(value = "상품 List 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "productNo", dataType = "Long", value = "상품코드"),
+            @ApiImplicitParam(name = "productName", dataType = "String", value = "상품명"),
+            @ApiImplicitParam(name = "keyword", dataType = "String", value = "키워드"),
+            @ApiImplicitParam(name = "lgroup", dataType = "String", value = "대분류"),
+            @ApiImplicitParam(name = "mgroup", dataType = "String", value = "중분류"),
+            @ApiImplicitParam(name = "sgroup", dataType = "String", value = "소분류"),
+            @ApiImplicitParam(name = "saleFlag", dataType = "String", value = "판매구분"),
+            @ApiImplicitParam(name = "signFlag", dataType = "String", value = "승인단계")
+    })
     @GetMapping("")
-    public Map<String, Object> findProductByFilters (@RequestParam Map<String, String> filterMap,
+    public Map<String, Object> findProductByFilters (@RequestParam(required = false) Map<String, String> filterMap,
                                                      @PageableDefault(size=10, sort="productNo", direction = Sort.Direction.DESC) Pageable pageable) {
 
         return productService.findProductByFilters(filterMap, pageable);

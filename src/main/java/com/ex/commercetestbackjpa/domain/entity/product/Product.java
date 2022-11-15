@@ -65,6 +65,9 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     private List<ProductImage> productImageList = new ArrayList<>();
 
+    @Transient
+    private ProductPrice productPrice;
+
     @Builder
     private Product (String productName, String lgroup, String mgroup, String sgroup, String keyword) {
 
@@ -99,5 +102,9 @@ public class Product extends BaseEntity {
 
     public void updateSignFlag(String signFlag) {
         this.signFlag = signFlag;
+    }
+
+    public void addApplyProductPrice(ProductPrice productPrice) {
+        this.productPrice = productPrice;
     }
 }

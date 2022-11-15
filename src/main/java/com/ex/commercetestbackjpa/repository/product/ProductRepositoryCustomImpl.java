@@ -27,13 +27,14 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom{
         List<Product> productList = queryFactory
                 .selectFrom(product)
                 .where(
-                        condition(filterMap.getOrDefault("productName", null), product.productName::contains),
-                        condition(filterMap.getOrDefault("keyword", null), product.keyword::contains),
-                        condition(filterMap.getOrDefault("lgroup", null), product.lgroup::eq),
-                        condition(filterMap.getOrDefault("mgroup", null), product.mgroup::eq),
-                        condition(filterMap.getOrDefault("sgroup", null), product.sgroup::eq),
-                        condition(filterMap.getOrDefault("saleFlag", null), product.saleFlag::eq),
-                        condition(filterMap.getOrDefault("signFlag", null), product.signFlag::eq)
+                        condition(Optional.ofNullable(filterMap.get("productNo")).map(Long::valueOf).orElse(null), product.productNo::eq),
+                        condition(filterMap.get("productName"), product.productName::contains),
+                        condition(filterMap.get("keyword"), product.keyword::contains),
+                        condition(filterMap.get("lgroup"), product.lgroup::eq),
+                        condition(filterMap.get("mgroup"), product.mgroup::eq),
+                        condition(filterMap.get("sgroup"), product.sgroup::eq),
+                        condition(filterMap.get("saleFlag"), product.saleFlag::eq),
+                        condition(filterMap.get("signFlag"), product.signFlag::eq)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

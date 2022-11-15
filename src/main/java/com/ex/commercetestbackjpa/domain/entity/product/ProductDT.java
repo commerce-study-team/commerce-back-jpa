@@ -61,6 +61,7 @@ public class ProductDT {
 
     public void settingProduct(Product product) {
         this.product = product;
+        this.product.getProductDtList().add(this);
     }
 
     public void updateProductDtName (String productDtName) {

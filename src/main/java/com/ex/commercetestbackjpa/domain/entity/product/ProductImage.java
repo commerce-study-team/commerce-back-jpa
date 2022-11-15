@@ -40,6 +40,7 @@ public class ProductImage {
 
     public void settingProduct(Product product) {
         this.product = product;
+        this.product.getProductImageList().add(this);
     }
 
     public void settingImageName(String imageName) {

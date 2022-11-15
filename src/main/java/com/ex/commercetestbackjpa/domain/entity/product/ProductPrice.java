@@ -52,6 +52,7 @@ public class ProductPrice {
 
     public void settingProduct(Product product) {
         this.product = product;
+        this.product.addApplyProductPrice(this);
     }
 
     public void updateSalePrice(Long salePrice) {

@@ -63,36 +63,6 @@ public class ProductService {
     }
 
     /**
-     * 단일 상품 조회
-     * @param productNo
-     * @return ProductDTO.Response
-     */
-    @Transactional(readOnly = true)
-    public ProductDTO.Response findProductByProductNo(Long productNo) {
-            Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
-            ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
-
-            productResponseDto.setProductDtResponseDtoList(
-                    product.getProductDtList().stream().map(n -> new ProductDtDTO.Response(n)).collect(Collectors.toList())
-            );
-
-            productResponseDto.setProductPriceResponseDto(
-                    new ProductPriceDTO.Response((product.getProductPriceList().stream()
-                    .filter(n -> n.getUseYn() == true)
-                    .filter(n -> n.getApplyDate().isBefore(LocalDateTime.now()))
-                    .max(Comparator.comparing(ProductPrice::getApplyDate))
-                    .orElseThrow(() -> new NoSuchElementException("가격 정보를 찾을 수 없습니다."))))
-            );
-
-
-            productResponseDto.setProductImageResponseDtoList(
-                    product.getProductImageList().stream().map(n -> new ProductImageDTO.Response(n)).collect(Collectors.toList())
-            );
-
-        return productResponseDto;
-    }
-
-    /**
      * 상품 List 조회
      * @param filterMap
      * @param pageable
