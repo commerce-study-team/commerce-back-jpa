@@ -1,5 +1,6 @@
 package com.ex.commercetestbackjpa.domain.entity.product;
 
+import com.ex.commercetestbackjpa.domain.base.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,11 +9,11 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 
-@Entity(name="TPRODUCTDT")
+@Entity(name="tproductDt")
 @Getter
 @NoArgsConstructor
 @DynamicInsert
-public class ProductDT {
+public class ProductDT extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

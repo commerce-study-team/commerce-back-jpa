@@ -19,8 +19,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
-import static com.ex.commercetestbackjpa.domain.entity.product.QProduct.product;
-
 @Api(tags = {"상품조회 및 저장 Controller"})
 @RestController
 @RequestMapping("/api/product")
@@ -28,7 +26,6 @@ import static com.ex.commercetestbackjpa.domain.entity.product.QProduct.product;
 public class ProductApiController {
 
     private final ProductService productService;
-
     @ApiOperation(value = "상품 저장")
     @PostMapping("")
     public Long saveProduct (@RequestBody @Valid ProductDTO.Request productRequestDto) {
@@ -53,7 +50,7 @@ public class ProductApiController {
             @ApiImplicitParam(name = "signFlag", dataType = "String", value = "승인단계")
     })
     @GetMapping("")
-    public Map<String, Object> findProductByFilters (@RequestParam(required = false) Map<String, String> filterMap,
+    public List<ProductDTO.Response> findProductByFilters (@RequestParam(required = false) Map<String, String> filterMap,
                                                      @PageableDefault(size=10, sort="productNo", direction = Sort.Direction.DESC) Pageable pageable) {
 
         return productService.findProductByFilters(filterMap, pageable);

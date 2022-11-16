@@ -69,10 +69,8 @@ public class ProductService {
      * @return Map<String, Object>
      */
     @Transactional(readOnly = true)
-    public Map<String, Object> findProductByFilters(Map<String, String> filterMap, Pageable pageable) {
-
-        Map<String, Object> result = new HashMap<>();
-        List<ProductDTO.Response> list = new ArrayList<>();
+    public List<ProductDTO.Response> findProductByFilters(Map<String, String> filterMap, Pageable pageable) {
+        List<ProductDTO.Response> result = new ArrayList<>();
         Page<Product> productList = productRepository.findByFilters(filterMap, pageable);
 
         for(Product product : productList.getContent()) {
@@ -97,10 +95,9 @@ public class ProductService {
                     product.getProductImageList().stream().map(n -> new ProductImageDTO.Response(n)).collect(Collectors.toList())
             );
 
-            list.add(productResponseDto);
+            result.add(productResponseDto);
         }
 
-        result.put("RESULT", list);
         return result;
     }
 
@@ -136,6 +133,7 @@ public class ProductService {
         for(ProductDtDTO.Request productDtDto : productDTRequestDtoList) {
             ProductDT productDt = productDtDto.toEntity();
             productDt.settingProduct(product);
+            System.out.println(product.getProductDtList().get(0));
             productDtRepository.save(productDt);
         }
 

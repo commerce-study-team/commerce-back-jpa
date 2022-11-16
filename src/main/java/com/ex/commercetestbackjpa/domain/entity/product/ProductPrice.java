@@ -1,5 +1,6 @@
 package com.ex.commercetestbackjpa.domain.entity.product;
 
+import com.ex.commercetestbackjpa.domain.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @DynamicInsert
-public class ProductPrice {
+public class ProductPrice extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
