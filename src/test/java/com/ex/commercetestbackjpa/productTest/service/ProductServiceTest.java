@@ -302,4 +302,9 @@ public class ProductServiceTest {
 
         return productService.findProductByFilters(map, pageable);
     }
+
+    @Test
+    void 상품이미지제거() {
+        Long productNo = productService.deleteProductImage(2L);
+    }
 }

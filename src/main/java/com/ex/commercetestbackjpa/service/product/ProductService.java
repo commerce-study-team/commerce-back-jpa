@@ -1,6 +1,6 @@
 package com.ex.commercetestbackjpa.service.product;
 
-import com.ex.commercetestbackjpa.config.util.FileUploadUtil;
+import com.ex.commercetestbackjpa.config.util.FileUtil;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
@@ -217,7 +217,7 @@ public class ProductService {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
 
         for(ProductImageDTO.Request productImageRequestDto : productImageRequestDtoList) {
-            String imageName = FileUploadUtil.uploadFile(productImageRequestDto.getImgFile());
+            String imageName = FileUtil.uploadFile(productImageRequestDto.getImgFile());
             ProductImage productImage = productImageRequestDto.toEntity();
             productImage.settingProduct(product);
             productImage.settingImageName(imageName);
@@ -225,5 +225,16 @@ public class ProductService {
         }
 
         return productNo;
+    }
+
+    @Transactional
+    public Long deleteProductImage(Long productImageNo) {
+        ProductImage productImage = productImageRepository.findById(productImageNo).orElseThrow(() -> new NoSuchElementException("상품 이미지를 찾을 수 없습니다."));
+
+        if(FileUtil.deleteFile(productImage.getImageName())) {
+            productImageRepository.deleteById(productImageNo);
+        }
+
+        return productImage.getProduct().getProductNo();
     }
 }

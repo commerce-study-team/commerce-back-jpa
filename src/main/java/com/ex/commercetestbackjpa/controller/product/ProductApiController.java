@@ -87,5 +87,12 @@ public class ProductApiController {
         return productService.saveProductImage(productImageRequestDtoList, productNo);
     }
 
+    @ApiOperation(value = "상품 이미지 삭제")
+    @DeleteMapping("/{productImageNo}/image")
+    public Long deleteProductImage(@PathVariable Long productImageNo) {
+
+        return productService.deleteProductImage(productImageNo);
+    }
+
     //상품 이미지 삭제 처리 추가 todo
 }
