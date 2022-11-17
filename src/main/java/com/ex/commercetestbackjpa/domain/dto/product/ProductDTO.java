@@ -2,8 +2,10 @@ package com.ex.commercetestbackjpa.domain.dto.product;
 
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -47,6 +49,8 @@ public class ProductDTO {
         @NotBlank(message = "가격정보는 필수 입력값입니다.")
         private List<ProductPriceDTO.Request> productPriceRequestDtoList;
 
+        private List<ProductImageDTO.Request> productImageRequestDtoList;
+
         public Product toEntity() {
 
             return Product.builder()
@@ -80,9 +84,11 @@ public class ProductDTO {
 
         private ProductPriceDTO.Response productPriceResponseDto;
 
-        private List<ProductDtDTO.Response> productDtResponseDtoList = new ArrayList<>();
+        private List<ProductDtDTO.Response> productDtResponseDtoList;
 
-        private List<ProductPriceDTO.Response> productPriceResponseDtoList = new ArrayList<>();
+        private List<ProductPriceDTO.Response> productPriceResponseDtoList;
+
+        private List<ProductImageDTO.Response> productImageResponseDtoList;
 
         public Response (Product product) {
             this.productNo = product.getProductNo();
@@ -95,36 +101,6 @@ public class ProductDTO {
             this.keyword = product.getKeyword();
             this.maxBuy = product.getMaxBuy();
             this.commentCount = product.getCommentCount();
-        }
-
-        public void addProductDtList(Product product) {
-            List<ProductDT> productDTList = product.getProductDtList();
-
-            // 단품 add
-            for (ProductDT productDT : productDTList) {
-                productDtResponseDtoList.add(new ProductDtDTO.Response(productDT));
-            }
-        }
-
-        public void addProductPriceList(Product product) {
-            List<ProductPrice> productPriceList = product.getProductPriceList();
-
-            // 가격 add
-            for (ProductPrice productPrice : productPriceList) {
-                productPriceResponseDtoList.add(new ProductPriceDTO.Response(productPrice));
-            }
-        }
-
-        public void findProductPrice (Product product) {
-            List<ProductPrice> productPriceList = product.getProductPriceList();
-
-            ProductPrice productPrice = productPriceList.stream()
-                    .filter(n -> n.getUseYn() == true)
-                    .filter(n -> n.getApplyDate().isBefore(LocalDateTime.now()))
-                    .max(Comparator.comparing(ProductPrice::getApplyDate))
-                    .orElseThrow(() -> new NoSuchElementException("가격 정보를 찾을 수 없습니다."));
-
-            this.productPriceResponseDto =  new ProductPriceDTO.Response(productPrice);
         }
     }
 

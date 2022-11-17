@@ -35,7 +35,7 @@ public class Product extends BaseEntity {
     private String sgroup;
 
     @Column(nullable = false, length = 2)
-    @ColumnDefault("00")
+    @ColumnDefault("'00'")
     private String saleFlag;
 
     @Column(nullable = false, length = 500)
@@ -50,7 +50,7 @@ public class Product extends BaseEntity {
     private long commentCount;
 
     @Column(nullable = false, length = 2)
-    @ColumnDefault("00")
+    @ColumnDefault("'00'")
     private String signFlag;
 
     @BatchSize(size=10)
@@ -60,6 +60,13 @@ public class Product extends BaseEntity {
     @BatchSize(size=10)
     @OneToMany(mappedBy = "product")
     private List<ProductPrice> productPriceList = new ArrayList<>();
+
+    @BatchSize(size=10)
+    @OneToMany(mappedBy = "product")
+    private List<ProductImage> productImageList = new ArrayList<>();
+
+    @Transient
+    private ProductPrice productPrice;
 
     @Builder
     private Product (String productName, String lgroup, String mgroup, String sgroup, String keyword) {
@@ -95,5 +102,9 @@ public class Product extends BaseEntity {
 
     public void updateSignFlag(String signFlag) {
         this.signFlag = signFlag;
+    }
+
+    public void addApplyProductPrice(ProductPrice productPrice) {
+        this.productPrice = productPrice;
     }
 }

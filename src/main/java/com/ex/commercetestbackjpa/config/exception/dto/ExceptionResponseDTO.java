@@ -1,4 +1,4 @@
-package com.ex.commercetestbackjpa.config.dto;
+package com.ex.commercetestbackjpa.config.exception.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
