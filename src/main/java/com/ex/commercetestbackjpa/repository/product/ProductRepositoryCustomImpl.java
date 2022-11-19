@@ -27,7 +27,6 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom{
         List<Product> productList = queryFactory
                 .selectFrom(product)
                 .where(
-                        condition(Optional.ofNullable(filterMap.get("productNo")).map(Long::valueOf).orElse(null), product.productNo::eq),
                         condition(filterMap.get("productName"), product.productName::contains),
                         condition(filterMap.get("keyword"), product.keyword::contains),
                         condition(filterMap.get("lgroup"), product.lgroup::eq),

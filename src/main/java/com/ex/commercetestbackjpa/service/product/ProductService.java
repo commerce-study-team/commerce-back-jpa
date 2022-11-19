@@ -76,12 +76,21 @@ public class ProductService {
         for(Product product : productList.getContent()) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
 
+            // 다건 상품조회 시 단품 정보 불필요
             productResponseDto.productInfoSettings(null, product.getProductPriceList(), product.getProductImageList());
 
             result.add(productResponseDto);
         }
 
         return result;
+    }
+
+    public ProductDTO.Response findProductByProductNo(Long productNo) {
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
+        ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
+        productResponseDto.productInfoSettings(product.getProductDtList(), product.getProductPriceList(), product.getProductImageList());
+
+        return productResponseDto;
     }
 
     /**
