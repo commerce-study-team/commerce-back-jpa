@@ -76,24 +76,7 @@ public class ProductService {
         for(Product product : productList.getContent()) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
 
-            // 단품
-            productResponseDto.setProductDtResponseDtoList(
-                    product.getProductDtList().stream().map(n -> new ProductDtDTO.Response(n)).collect(Collectors.toList())
-            );
-
-            // 가격
-            productResponseDto.setProductPriceResponseDto(
-                    new ProductPriceDTO.Response((product.getProductPriceList().stream()
-                            .filter(n -> n.getUseYn() == true)
-                            .filter(n -> n.getApplyDate().isBefore(LocalDateTime.now()))
-                            .max(Comparator.comparing(ProductPrice::getApplyDate))
-                            .orElseThrow(() -> new NoSuchElementException("가격 정보를 찾을 수 없습니다."))))
-            );
-
-            // 이미지
-            productResponseDto.setProductImageResponseDtoList(
-                    product.getProductImageList().stream().map(n -> new ProductImageDTO.Response(n)).collect(Collectors.toList())
-            );
+            productResponseDto.productInfoSettings(null, product.getProductPriceList(), product.getProductImageList());
 
             result.add(productResponseDto);
         }

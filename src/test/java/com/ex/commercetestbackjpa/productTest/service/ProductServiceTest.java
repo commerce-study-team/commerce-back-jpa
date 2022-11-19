@@ -148,7 +148,6 @@ public class ProductServiceTest {
 
         for(ProductDTO.Response pr : list) {
             assertThat(pr.getKeyword()).isEqualTo("테스트");
-            assertThat(pr.getProductDtResponseDtoList().get(0).getProductDtNo()).isNotNull();
             assertThat(pr.getProductPriceResponseDto().getProductPriceNo()).isNotNull();
             System.out.println(pr.getProductNo());
         }

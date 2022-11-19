@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class ProductDTO {
 
@@ -101,6 +102,38 @@ public class ProductDTO {
             this.keyword = product.getKeyword();
             this.maxBuy = product.getMaxBuy();
             this.commentCount = product.getCommentCount();
+        }
+
+        public void productInfoSettings(List<ProductDT> productDt, List<ProductPrice> productPrice, List<ProductImage> productImage) {
+            if(productDt != null) {
+                this.addProductDtDtos(productDt);
+            }
+            if(productPrice != null) {
+                this.addCurrentProductPrice(productPrice);
+            }
+            if(productImage != null) {
+                this.addProductImageDtos(productImage);
+            }
+
+        }
+
+        // 단품정보 세팅
+        private void addProductDtDtos(List<ProductDT> productDt) {
+            this.productDtResponseDtoList = productDt.stream().map(n -> new ProductDtDTO.Response(n)).collect(Collectors.toList());
+        }
+
+        // 가격정보 세팅
+        private void addCurrentProductPrice(List<ProductPrice> productPrice) {
+            this.productPriceResponseDto = new ProductPriceDTO.Response((productPrice.stream()
+                    .filter(n -> n.getUseYn() == true)
+                    .filter(n -> n.getApplyDate().isBefore(LocalDateTime.now()))
+                    .max(Comparator.comparing(ProductPrice::getApplyDate))
+                    .orElseThrow(() -> new NoSuchElementException("가격 정보를 찾을 수 없습니다."))));
+        }
+
+        // 이미지정보 세팅
+        private void addProductImageDtos(List<ProductImage> productImage) {
+            this.productImageResponseDtoList = productImage.stream().map(n -> new ProductImageDTO.Response(n)).collect(Collectors.toList());
         }
     }
 
