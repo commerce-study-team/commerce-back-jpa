@@ -19,7 +19,6 @@ import java.util.List;
 public class Product extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 10)
     private Long productNo;
 
     @Column(nullable = false, length = 100)
@@ -106,5 +105,9 @@ public class Product extends BaseEntity {
 
     public void addApplyProductPrice(ProductPrice productPrice) {
         this.productPrice = productPrice;
+    }
+
+    public void updateCommentCount(Long commentCount) {
+        this.commentCount = commentCount;
     }
 }

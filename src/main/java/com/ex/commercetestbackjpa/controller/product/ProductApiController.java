@@ -1,5 +1,6 @@
 package com.ex.commercetestbackjpa.controller.product;
 
+import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductDTO;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import io.swagger.annotations.Api;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.web.PageableDefault;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -43,5 +45,11 @@ public class ProductApiController {
     public ProductDTO.Response findProductByProductNo (@PathVariable Long productNo) {
 
         return productService.findProductByProductNo(productNo);
+    }
+
+    @ApiOperation(value = "상품 리뷰 저장")
+    @PostMapping("")
+    public Long saveProductComment(@RequestBody @Valid CommentDTO.Request commentRequestDTO) {
+        return productService.saveComment(commentRequestDTO);
     }
 }

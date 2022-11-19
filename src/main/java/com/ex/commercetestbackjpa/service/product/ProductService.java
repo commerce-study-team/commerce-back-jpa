@@ -1,11 +1,14 @@
 package com.ex.commercetestbackjpa.service.product;
 
 import com.ex.commercetestbackjpa.config.util.FileUtil;
+import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
+import com.ex.commercetestbackjpa.domain.entity.comment.Comment;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
+import com.ex.commercetestbackjpa.repository.comment.CommentRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductImageRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
@@ -33,6 +36,8 @@ public class ProductService {
     private final ProductPriceRepository productPriceRepository;
 
     private final ProductImageRepository productImageRepository;
+
+    private final CommentRepository commentRepository;
 
     /**
      * 상품 저장
@@ -233,5 +238,33 @@ public class ProductService {
         }
 
         return productImage.getProduct().getProductNo();
+    }
+
+    @Transactional
+    public Long saveComment(CommentDTO.Request commentRequestDto) {
+        Product product = productRepository.findById(commentRequestDto.getProductNo()).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
+
+        // 회원 데이터 체크 로직 추가 예정
+        // Customer customer = customerRepository.findById(commentRequestDto.getCustNo()).orElseThrow(() -> new NoSuchElementException("회원 정보를 찾을 수 없습니다."));
+
+        // 주문 데이터 체크 로직 추가 예정
+        // 고객이 해당 주문 건으로 작성한 리뷰가 있는지 확인
+        // Order order = orderRepository.findById(commentRequestDto.getOrderNo()).orElseThrow(() -> new NoSuchElementException("주문 정보를 찾을 수 없습니다."));
+
+        // 비회원 주문일 경우 분기 처리 예정?? 비회원 주문 가능하게 변경 될 경우 수정 필요
+
+        Comment comment = commentRequestDto.toEntity();
+
+        comment.settingProduct(product);
+        comment.settingCustomer(commentRequestDto.getCustNo());
+        comment.settingOrder(commentRequestDto.getOrderNo());
+
+        commentRepository.save(comment);
+
+        Long count = commentRepository.countByProduct(product); // 싱크를 맞추기 위해서 재검색.. 효율성 판단하여 제거 예정
+
+        product.updateCommentCount(count+1); // 집계로 처리?? Transaction 내에서 영속성 컨텍스트 값을 조회하여 + 처리하는게 맞는지 검토
+
+        return product.getProductNo();
     }
 }

@@ -1,5 +1,6 @@
 package com.ex.commercetestbackjpa.productTest.service;
 
+import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.junit.jupiter.api.Test;
@@ -305,5 +306,18 @@ public class ProductServiceTest {
     @Test
     void 상품이미지제거() {
         Long productNo = productService.deleteProductImage(2L);
+    }
+
+    @Test
+    void 상품평저장() {
+        CommentDTO.Request commentRequestDto = new CommentDTO.Request();
+        commentRequestDto.setTitle("상품평 남깁니다!");
+        commentRequestDto.setContent("상품 품질 정말 좋네요");
+        commentRequestDto.setGrade(5);
+        commentRequestDto.setCustNo(1L);
+        commentRequestDto.setProductNo(1L);
+        commentRequestDto.setOrderNo(1L);
+
+        Long productNo = productService.saveComment(commentRequestDto);
     }
 }
