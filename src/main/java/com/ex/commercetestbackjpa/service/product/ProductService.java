@@ -227,6 +227,11 @@ public class ProductService {
         return productNo;
     }
 
+    /**
+     * 상품 이미지 삭제
+     * @param productImageNo
+     * @return Long
+     */
     @Transactional
     public Long deleteProductImage(Long productImageNo) {
         ProductImage productImage = productImageRepository.findById(productImageNo).orElseThrow(() -> new NoSuchElementException("상품 이미지를 찾을 수 없습니다."));

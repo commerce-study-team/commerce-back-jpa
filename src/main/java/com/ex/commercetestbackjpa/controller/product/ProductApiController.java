@@ -93,6 +93,4 @@ public class ProductApiController {
 
         return productService.deleteProductImage(productImageNo);
     }
-
-    //상품 이미지 삭제 처리 추가 todo
 }
