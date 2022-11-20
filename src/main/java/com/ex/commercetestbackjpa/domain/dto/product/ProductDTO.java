@@ -45,6 +45,9 @@ public class ProductDTO {
         @ApiModelProperty(value = "승인구분")
         private String signFlag;
 
+        @ApiModelProperty(value = "1일 최대판매가능수량")
+        private int maxBuy;
+
         @ApiModelProperty(value = "검색키워드")
         @NotBlank(message = "검색어는 필수 입력값입니다.")
         private String keyword;

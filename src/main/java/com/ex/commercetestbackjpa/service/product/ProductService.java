@@ -138,12 +138,7 @@ public class ProductService {
     public Long updateProduct(ProductDTO.Request productRequestDto) {
         Product product = productRepository.findById(productRequestDto.getProductNo()).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
 
-        product.updateProductName(productRequestDto.getProductName());
-        product.updateKeyword(productRequestDto.getKeyword());
-        product.updateSaleFlag(productRequestDto.getSaleFlag());
-        product.updateLMSgroup(productRequestDto.getLgroup(), productRequestDto.getMgroup(), productRequestDto.getSgroup());
-        product.updateMaxBuy(product.getMaxBuy());
-        product.updateSignFlag(product.getSignFlag());
+        product.updateProductOptions(productRequestDto);
 
         return product.getProductNo();
     }
@@ -161,7 +156,6 @@ public class ProductService {
         for(ProductDtDTO.Request productDtDto : productDTRequestDtoList) {
             ProductDT productDt = productDtDto.toEntity();
             productDt.settingProduct(product);
-            System.out.println(product.getProductDtList().get(0));
             productDtRepository.save(productDt);
         }
 
@@ -178,9 +172,8 @@ public class ProductService {
     public Long updateProductDt(List<ProductDtDTO.Request> productDTRequestDtoList, Long productNo) {
         for(ProductDtDTO.Request productDTRequestDto : productDTRequestDtoList) {
             ProductDT productDt = productDtRepository.findById(productDTRequestDto.getProductDtNo()).orElseThrow(() -> new NoSuchElementException("단품 정보를 찾을 수 없습니다."));
-            productDt.updateColor(productDTRequestDto.getColorCode(), productDTRequestDto.getColorName());
-            productDt.updateSize(productDTRequestDto.getSizeCode(), productDTRequestDto.getSizeName());
-            productDt.updateSaleFlag(productDTRequestDto.getSaleFlag());
+
+            productDt.updateProductDtOptions(productDTRequestDto);
         }
 
         return productNo;
