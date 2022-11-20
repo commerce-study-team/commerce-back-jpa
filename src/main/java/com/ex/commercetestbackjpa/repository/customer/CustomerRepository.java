@@ -1,4 +1,4 @@
-package com.ex.commercetestbackjpa.repository;
+package com.ex.commercetestbackjpa.repository.customer;
 
 import com.ex.commercetestbackjpa.domain.entity.customer.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;

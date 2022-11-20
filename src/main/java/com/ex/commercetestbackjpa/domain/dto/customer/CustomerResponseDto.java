@@ -1,4 +1,4 @@
-package com.ex.commercetestbackjpa.domain.entity.customer.dto;
+package com.ex.commercetestbackjpa.domain.dto.customer;
 
 import com.ex.commercetestbackjpa.domain.entity.customer.Customer;
 import lombok.AllArgsConstructor;
