@@ -13,7 +13,8 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity(name="tproductPrice")
+@Entity
+@Table(name="tproductPrice")
 @Getter
 @NoArgsConstructor
 @DynamicInsert

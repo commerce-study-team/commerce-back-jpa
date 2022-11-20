@@ -20,9 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -49,7 +47,7 @@ public class ProductService {
         Product product = productRequestDto.toEntity();
         List<ProductDtDTO.Request> productDTRequestDtoList = productRequestDto.getProductDtRequestDtoList();
         List<ProductPriceDTO.Request> productPriceRequestDtoList = productRequestDto.getProductPriceRequestDtoList();
-        List<ProductImageDTO.Request> productImageRequestDtoList = productRequestDto.getProductImageRequestDtoList();
+        Optional<List<ProductImageDTO.Request>> productImageRequestDtoList = Optional.ofNullable(productRequestDto.getProductImageRequestDtoList());
 
         Long productNo = productRepository.save(product).getProductNo();
 
@@ -60,11 +58,34 @@ public class ProductService {
         this.saveProductPrice(productPriceRequestDtoList, productNo);
 
         // 이미지는 필수가 아니기 때문에 데이터 있을 때 저장
-        if(productImageRequestDtoList != null) {
-            this.saveProductImage(productImageRequestDtoList, productNo);
-        }
+        productImageRequestDtoList.ifPresent(n -> this.saveProductImage(n, productNo));
+
 
         return productNo;
+    }
+
+    /**
+     * ADMIN 상품 List 조회
+     * @param filterMap
+     * @param pageable
+     * @return Map<String, Object>
+     */
+    @Transactional(readOnly = true)
+    public List<ProductDTO.Response> findProductForManage(Map<String, String> filterMap, Pageable pageable) {
+        List<ProductDTO.Response> result = new ArrayList<>();
+        Page<Product> productList = productRepository.findByFilters(filterMap, pageable);
+
+        for(Product product : productList.getContent()) {
+            ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
+
+            productResponseDto.addProductDtDtos(product.getProductDtList());
+            productResponseDto.addCurrentProductPrice(product.getProductPriceList());
+            productResponseDto.addProductImageDtos(product.getProductImageList());
+
+            result.add(productResponseDto);
+        }
+
+        return result;
     }
 
     /**
@@ -81,8 +102,8 @@ public class ProductService {
         for(Product product : productList.getContent()) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
 
-            // 다건 상품조회 시 단품 정보 불필요
-            productResponseDto.productInfoSettings(null, product.getProductPriceList(), product.getProductImageList());
+            productResponseDto.addCurrentProductPrice(product.getProductPriceList());
+            productResponseDto.addProductImageDtos(product.getProductImageList());
 
             result.add(productResponseDto);
         }
@@ -90,10 +111,15 @@ public class ProductService {
         return result;
     }
 
+    @Transactional(readOnly = true)
     public ProductDTO.Response findProductByProductNo(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
         ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
-        productResponseDto.productInfoSettings(product.getProductDtList(), product.getProductPriceList(), product.getProductImageList());
+
+        productResponseDto.addProductDtDtos(product.getProductDtList());
+        productResponseDto.addCurrentProductPrice(product.getProductPriceList());
+        productResponseDto.addProductImageDtos(product.getProductImageList());
+        productResponseDto.addProductCommentDtos(product.getProductCommentList());
 
         return productResponseDto;
     }

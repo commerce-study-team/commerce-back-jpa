@@ -1,6 +1,7 @@
 package com.ex.commercetestbackjpa.domain.entity.product;
 
 import com.ex.commercetestbackjpa.domain.base.BaseEntity;
+import com.ex.commercetestbackjpa.domain.entity.comment.Comment;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name="tproduct")
+@Entity
+@Table(name="tproduct")
 @Getter
 @NoArgsConstructor
 @DynamicInsert
@@ -63,6 +65,10 @@ public class Product extends BaseEntity {
     @BatchSize(size=10)
     @OneToMany(mappedBy = "product")
     private List<ProductImage> productImageList = new ArrayList<>();
+
+    @BatchSize(size=10)
+    @OneToMany(mappedBy = "product")
+    private List<Comment> productCommentList = new ArrayList<>();
 
     @Transient
     private ProductPrice productPrice;

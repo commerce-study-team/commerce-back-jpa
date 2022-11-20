@@ -1,5 +1,7 @@
 package com.ex.commercetestbackjpa.domain.dto.product;
 
+import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
+import com.ex.commercetestbackjpa.domain.entity.comment.Comment;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
@@ -9,10 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProductDTO {
@@ -91,6 +90,8 @@ public class ProductDTO {
 
         private List<ProductImageDTO.Response> productImageResponseDtoList;
 
+        private List<CommentDTO.Response> productCommentResponseDtoList;
+
         public Response (Product product) {
             this.productNo = product.getProductNo();
             this.productName = product.getProductName();
@@ -104,27 +105,14 @@ public class ProductDTO {
             this.commentCount = product.getCommentCount();
         }
 
-        public void productInfoSettings(List<ProductDT> productDt, List<ProductPrice> productPrice, List<ProductImage> productImage) {
-            if(productDt != null) {
-                this.addProductDtDtos(productDt);
-            }
-            if(productPrice != null) {
-                this.addCurrentProductPrice(productPrice);
-            }
-            if(productImage != null) {
-                this.addProductImageDtos(productImage);
-            }
-
-        }
-
         // 단품정보 세팅
-        private void addProductDtDtos(List<ProductDT> productDt) {
-            this.productDtResponseDtoList = productDt.stream().map(n -> new ProductDtDTO.Response(n)).collect(Collectors.toList());
+        public void addProductDtDtos(List<ProductDT> productDts) {
+                this.productDtResponseDtoList = productDts.stream().map(n -> new ProductDtDTO.Response(n)).collect(Collectors.toList());
         }
 
         // 가격정보 세팅
-        private void addCurrentProductPrice(List<ProductPrice> productPrice) {
-            this.productPriceResponseDto = new ProductPriceDTO.Response((productPrice.stream()
+        public void addCurrentProductPrice(List<ProductPrice> productPrices) {
+            this.productPriceResponseDto = new ProductPriceDTO.Response((productPrices.stream()
                     .filter(n -> n.getUseYn() == true)
                     .filter(n -> n.getApplyDate().isBefore(LocalDateTime.now()))
                     .max(Comparator.comparing(ProductPrice::getApplyDate))
@@ -132,8 +120,13 @@ public class ProductDTO {
         }
 
         // 이미지정보 세팅
-        private void addProductImageDtos(List<ProductImage> productImage) {
-            this.productImageResponseDtoList = productImage.stream().map(n -> new ProductImageDTO.Response(n)).collect(Collectors.toList());
+        public void addProductImageDtos(List<ProductImage> productImages) {
+            this.productImageResponseDtoList = productImages.stream().map(n -> new ProductImageDTO.Response(n)).collect(Collectors.toList());
+        }
+
+        // 상품평 세팅
+        public void addProductCommentDtos(List<Comment> productComment) {
+            this.productCommentResponseDtoList = productComment.stream().map(n -> new CommentDTO.Response(n)).collect(Collectors.toList());
         }
     }
 

@@ -7,7 +7,8 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 
-@Entity(name="tcode")
+@Entity
+@Table(name="tcode")
 @Getter
 @NoArgsConstructor
 @DynamicInsert

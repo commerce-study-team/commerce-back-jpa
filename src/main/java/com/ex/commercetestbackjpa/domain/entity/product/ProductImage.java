@@ -9,7 +9,8 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 
-@Entity(name="tproductImage")
+@Entity
+@Table(name="tproductImage")
 @Getter
 @NoArgsConstructor
 @DynamicInsert
