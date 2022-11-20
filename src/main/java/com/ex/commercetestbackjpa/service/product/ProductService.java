@@ -68,7 +68,7 @@ public class ProductService {
      * ADMIN 상품 List 조회
      * @param filterMap
      * @param pageable
-     * @return Map<String, Object>
+     * @return List<ProductDTO.Response>
      */
     @Transactional(readOnly = true)
     public List<ProductDTO.Response> findProductForManage(Map<String, String> filterMap, Pageable pageable) {
@@ -92,7 +92,7 @@ public class ProductService {
      * 상품 List 조회
      * @param filterMap
      * @param pageable
-     * @return Map<String, Object>
+     * @return List<ProductDTO.Response>
      */
     @Transactional(readOnly = true)
     public List<ProductDTO.Response> findProductByFilters(Map<String, String> filterMap, Pageable pageable) {
@@ -111,6 +111,11 @@ public class ProductService {
         return result;
     }
 
+    /**
+     * 상품 List 조회
+     * @param productNo
+     * @return ProductDTO.Response
+     */
     @Transactional(readOnly = true)
     public ProductDTO.Response findProductByProductNo(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));

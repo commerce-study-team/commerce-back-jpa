@@ -6,6 +6,7 @@ import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,33 +23,41 @@ public class ProductDTO {
 
         private Long productNo;
 
+        @ApiModelProperty(value = "상품명")
         @NotBlank(message = "상품명은 필수 입력값입니다.")
         private String productName;
 
+        @ApiModelProperty(value = "대분류")
         @NotBlank(message = "대분류는 필수 입력값입니다.")
         private String lgroup;
 
+        @ApiModelProperty(value = "중분류")
         @NotBlank(message = "중분류는 필수 입력값입니다.")
         private String mgroup;
 
+        @ApiModelProperty(value = "소분류")
         @NotBlank(message = "소분류는 필수 입력값입니다.")
         private String sgroup;
 
+        @ApiModelProperty(value = "판매구분")
         private String saleFlag;
 
+        @ApiModelProperty(value = "승인구분")
         private String signFlag;
 
+        @ApiModelProperty(value = "검색키워드")
         @NotBlank(message = "검색어는 필수 입력값입니다.")
         private String keyword;
 
-        // 단품 정보 DTO
+        @ApiModelProperty(value = "단품정보")
         @NotBlank(message = "단품정보는 필수 입력값입니다.")
         private List<ProductDtDTO.Request> productDtRequestDtoList;
 
-        // 가격 정보 DTO
+        @ApiModelProperty(value = "가격정보")
         @NotBlank(message = "가격정보는 필수 입력값입니다.")
         private List<ProductPriceDTO.Request> productPriceRequestDtoList;
 
+        @ApiModelProperty(value = "이미지정보")
         private List<ProductImageDTO.Request> productImageRequestDtoList;
 
         public Product toEntity() {
