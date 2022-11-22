@@ -56,19 +56,19 @@ public class Product extends BaseEntity {
     @ColumnDefault("'00'")
     private String signFlag;
 
-    @BatchSize(size=10)
+    @BatchSize(size=100)
     @OneToMany(mappedBy = "product")
     private List<ProductDT> productDtList = new ArrayList<>();
 
-    @BatchSize(size=10)
+    @BatchSize(size=100)
     @OneToMany(mappedBy = "product")
     private List<ProductPrice> productPriceList = new ArrayList<>();
 
-    @BatchSize(size=10)
+    @BatchSize(size=100)
     @OneToMany(mappedBy = "product")
     private List<ProductImage> productImageList = new ArrayList<>();
 
-    @BatchSize(size=10)
+    @BatchSize(size=100)
     @OneToMany(mappedBy = "product")
     private List<Comment> productCommentList = new ArrayList<>();
 

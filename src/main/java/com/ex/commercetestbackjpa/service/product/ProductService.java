@@ -2,8 +2,10 @@ package com.ex.commercetestbackjpa.service.product;
 
 import com.ex.commercetestbackjpa.config.util.FileUtil;
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
+import com.ex.commercetestbackjpa.domain.dto.comment.CommentImageDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.domain.entity.comment.Comment;
+import com.ex.commercetestbackjpa.domain.entity.comment.CommentImage;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
@@ -282,6 +284,12 @@ public class ProductService {
         comment.settingProduct(product);
         comment.settingCustomer(commentRequestDto.getCustNo());
         comment.settingOrder(commentRequestDto.getOrderNo());
+
+        for(CommentImageDTO.Request commentImageDTO : commentRequestDto.getCommentImageRequestDtoList()) {
+            CommentImage commentImage = commentImageDTO.toEntity();
+            commentImage.settingImageName(FileUtil.uploadFile(commentImageDTO.getImgFile()));
+            comment.addCommentImage(commentImage);
+        }
 
         commentRepository.save(comment);
 

@@ -1,6 +1,7 @@
 package com.ex.commercetestbackjpa.productTest.service;
 
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
+import com.ex.commercetestbackjpa.domain.dto.comment.CommentImageDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.junit.jupiter.api.Test;
@@ -87,11 +88,7 @@ public class ProductServiceTest {
                 "테스트.png", "image/png",
                 new FileInputStream(filePath));
 
-
-        UUID uuid = UUID.randomUUID();
-        productImageRequestDto.setImageName(uuid + "테스트.png");
         productImageRequestDto.setImgFile(multipartFile);
-
         productImageRequestDtoList.add(productImageRequestDto);
         // 이미지 데이터 END
 
@@ -290,14 +287,30 @@ public class ProductServiceTest {
     }
 
     @Test
-    void 상품평저장() {
+    void 상품평저장() throws Exception {
         CommentDTO.Request commentRequestDto = new CommentDTO.Request();
+        List<CommentImageDTO.Request> commentImageRequestDtos = new ArrayList<>();
         commentRequestDto.setTitle("상품평 남깁니다!");
         commentRequestDto.setContent("상품 품질 정말 좋네요");
         commentRequestDto.setGrade(5);
         commentRequestDto.setCustNo(1L);
         commentRequestDto.setProductNo(1L);
         commentRequestDto.setOrderNo(1L);
+
+        // 이미지 데이터 -- MockObject 생성
+        CommentImageDTO.Request commentImageRequestDto = new CommentImageDTO.Request();
+        commentImageRequestDto.setImageRealName("테스트.png");
+
+        String filePath = "src/test/resources/testImage/test.png";
+        MockMultipartFile multipartFile = new MockMultipartFile("image",
+                "테스트.png", "image/png",
+                new FileInputStream(filePath));
+
+        commentImageRequestDto.setImgFile(multipartFile);
+        commentImageRequestDtos.add(commentImageRequestDto);
+        // 이미지 데이터 END
+
+        commentRequestDto.setCommentImageRequestDtoList(commentImageRequestDtos);
 
         Long productNo = productService.saveComment(commentRequestDto);
 

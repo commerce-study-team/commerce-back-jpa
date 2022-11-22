@@ -1,13 +1,10 @@
 package com.ex.commercetestbackjpa.domain.dto.comment;
 
 import com.ex.commercetestbackjpa.domain.entity.comment.Comment;
-import com.ex.commercetestbackjpa.domain.entity.product.Product;
-import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import java.util.List;
 
 public class CommentDTO {
 
@@ -32,6 +29,8 @@ public class CommentDTO {
         private Long likes;
 
         private Long productNo;
+
+        private List<CommentImageDTO.Request> commentImageRequestDtoList;
 
         public Comment toEntity() {
             return Comment.builder()

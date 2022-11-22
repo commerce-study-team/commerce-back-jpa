@@ -40,7 +40,6 @@ public class ProductAdminController {
 
     @ApiOperation(value = "상품 List 조회 (admin)")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "productNo", dataType = "Long", value = "상품코드"),
             @ApiImplicitParam(name = "productName", dataType = "String", value = "상품명"),
             @ApiImplicitParam(name = "keyword", dataType = "String", value = "키워드"),
             @ApiImplicitParam(name = "lgroup", dataType = "String", value = "대분류"),
@@ -53,7 +52,7 @@ public class ProductAdminController {
     public List<ProductDTO.Response> findProductByFilters (@RequestParam(required = false) Map<String, String> filterMap,
                                                      @PageableDefault(size=10, sort="productNo", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        return productService.findProductByFilters(filterMap, pageable);
+        return productService.findProductForManage(filterMap, pageable);
     }
 
     @ApiOperation(value = "단품 저장 (admin)")
