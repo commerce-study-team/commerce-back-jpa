@@ -10,6 +10,7 @@ import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
+import com.ex.commercetestbackjpa.repository.comment.CommentImageRepository;
 import com.ex.commercetestbackjpa.repository.comment.CommentRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductImageRepository;
@@ -38,6 +39,8 @@ public class ProductService {
     private final ProductImageRepository productImageRepository;
 
     private final CommentRepository commentRepository;
+
+    private final CommentImageRepository commentImageRepository;
 
     /**
      * 상품 저장
@@ -289,6 +292,8 @@ public class ProductService {
             CommentImage commentImage = commentImageDTO.toEntity();
             commentImage.settingImageName(FileUtil.uploadFile(commentImageDTO.getImgFile()));
             comment.addCommentImage(commentImage);
+
+            commentImageRepository.save(commentImage);
         }
 
         commentRepository.save(comment);

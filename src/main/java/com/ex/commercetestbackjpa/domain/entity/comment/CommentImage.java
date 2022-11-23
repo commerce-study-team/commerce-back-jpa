@@ -17,7 +17,6 @@ public class CommentImage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_image_no")
     private Long commentImageNo;
 
     @Column(nullable = false, length = 100)
