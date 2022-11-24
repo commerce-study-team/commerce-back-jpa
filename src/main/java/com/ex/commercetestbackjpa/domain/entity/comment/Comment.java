@@ -62,6 +62,7 @@ public class Comment extends BaseEntity {
 
     public void settingProduct(Product product) {
         this.product = product;
+        product.getProductCommentList().add(this);
     }
 
     // 추후 엔티티로 교체 예정

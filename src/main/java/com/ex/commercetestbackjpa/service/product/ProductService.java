@@ -28,6 +28,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -75,7 +76,6 @@ public class ProductService {
      * @param pageable
      * @return List<ProductDTO.Response>
      */
-    @Transactional(readOnly = true)
     public List<ProductDTO.Response> findProductForManage(Map<String, String> filterMap, Pageable pageable) {
         List<ProductDTO.Response> result = new ArrayList<>();
         Page<Product> productList = productRepository.findByFilters(filterMap, pageable);
@@ -99,7 +99,6 @@ public class ProductService {
      * @param pageable
      * @return List<ProductDTO.Response>
      */
-    @Transactional(readOnly = true)
     public List<ProductDTO.Response> findProductByFilters(Map<String, String> filterMap, Pageable pageable) {
         List<ProductDTO.Response> result = new ArrayList<>();
         Page<Product> productList = productRepository.findByFilters(filterMap, pageable);
@@ -121,7 +120,6 @@ public class ProductService {
      * @param productNo
      * @return ProductDTO.Response
      */
-    @Transactional(readOnly = true)
     public ProductDTO.Response findProductByProductNo(Long productNo) {
         Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
         ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
@@ -292,8 +290,6 @@ public class ProductService {
             CommentImage commentImage = commentImageDTO.toEntity();
             commentImage.settingImageName(FileUtil.uploadFile(commentImageDTO.getImgFile()));
             comment.addCommentImage(commentImage);
-
-            commentImageRepository.save(commentImage);
         }
 
         commentRepository.save(comment);

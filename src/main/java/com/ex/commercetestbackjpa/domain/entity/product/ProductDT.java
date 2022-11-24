@@ -77,7 +77,7 @@ public class ProductDT extends BaseEntity {
     }
 
     public void updateProductDtName (String productDtName) {
-        this.productDtName = productDtName;
+        Optional.ofNullable(productDtName).ifPresent(n -> this.productDtName = n);
 
     }
 

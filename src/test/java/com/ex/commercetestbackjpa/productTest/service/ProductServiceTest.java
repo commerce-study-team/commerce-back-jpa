@@ -13,9 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -36,7 +34,7 @@ public class ProductServiceTest {
         List<ProductImageDTO.Request> productImageRequestDtoList = new ArrayList<>();
 
         // 상품 데이터
-        productRequestDto.setProductName("테스트 상품");
+        productRequestDto.setProductName("키워드 검색 테스트");
         productRequestDto.setKeyword("테스트");
         productRequestDto.setLgroup("10");
         productRequestDto.setMgroup("10");
@@ -132,15 +130,13 @@ public class ProductServiceTest {
     void 키워드검색() {
         Map<String, String> filterMap = new HashMap<>();
 
-        filterMap.put("keyword", "테스트");
+        filterMap.put("keyword", "키워드 검색 테스트");
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "productNo");
 
         List<ProductDTO.Response> list = productService.findProductByFilters(filterMap, pageable);
 
         for(ProductDTO.Response pr : list) {
             assertThat(pr.getKeyword()).isEqualTo("테스트");
-            assertThat(pr.getProductPriceResponseDto().getProductPriceNo()).isNotNull();
-            System.out.println(pr.getProductNo());
         }
     }
 
@@ -213,9 +209,9 @@ public class ProductServiceTest {
 
         list.add(productDTRequestDto);
 
-        productService.updateProductDt(list, 1L);
+        Long productNo = productService.updateProductDt(list, 1L);
 
-        ProductDtDTO.Response productDtResponseDto = productService.findProductDtByProductDtNo(1L);
+        ProductDtDTO.Response productDtResponseDto = productService.findProductDtByProductDtNo(productNo);
 
         assertThat(productDTRequestDto.getColorCode()).isEqualTo(productDtResponseDto.getColorCode());
         assertThat(productDTRequestDto.getSizeCode()).isEqualTo(productDtResponseDto.getSizeCode());
@@ -279,6 +275,27 @@ public class ProductServiceTest {
         ProductPriceDTO.Response productPriceResponseDto = productResponseDto.getProductPriceResponseDto();
 
         assertThat(productPriceResponseDto).isNotNull();
+    }
+
+    @Test
+    void 상품이미지저장() throws Exception {
+        List<ProductImageDTO.Request> productImageRequestDtoList = new ArrayList<>();
+        // 이미지 데이터 -- MockObject 생성
+        ProductImageDTO.Request productImageRequestDto = new ProductImageDTO.Request();
+        productImageRequestDto.setImageRealName("테스트.png");
+
+        String filePath = "src/test/resources/testImage/test.png";
+        MockMultipartFile multipartFile = new MockMultipartFile("image",
+                "테스트.png", "image/png",
+                new FileInputStream(filePath));
+
+        productImageRequestDto.setImgFile(multipartFile);
+        productImageRequestDtoList.add(productImageRequestDto);
+        // 이미지 데이터 END
+
+        Long productNo = productService.saveProductImage(productImageRequestDtoList, 2L);
+
+        assertThat(productService.findProductByProductNo(productNo).getProductImageResponseDtoList().size()).isNotZero();
     }
 
     @Test
