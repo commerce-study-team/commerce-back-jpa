@@ -1,4 +1,4 @@
-package com.ex.commercetestbackjpa.domain.entity.comment;
+package com.ex.commercetestbackjpa.domain.entity.product;
 
 import com.ex.commercetestbackjpa.domain.base.BaseEntity;
 import lombok.Builder;

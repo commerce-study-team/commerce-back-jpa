@@ -1,7 +1,6 @@
-package com.ex.commercetestbackjpa.domain.entity.comment;
+package com.ex.commercetestbackjpa.domain.entity.product;
 
 import com.ex.commercetestbackjpa.domain.base.BaseEntity;
-import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

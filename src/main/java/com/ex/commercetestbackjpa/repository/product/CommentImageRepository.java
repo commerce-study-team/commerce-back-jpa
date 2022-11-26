@@ -1,7 +1,7 @@
-package com.ex.commercetestbackjpa.repository.comment;
+package com.ex.commercetestbackjpa.repository.product;
 
 
-import com.ex.commercetestbackjpa.domain.entity.comment.CommentImage;
+import com.ex.commercetestbackjpa.domain.entity.product.CommentImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
 package com.ex.commercetestbackjpa.domain.dto.product;
 
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
-import com.ex.commercetestbackjpa.domain.entity.comment.Comment;
+import com.ex.commercetestbackjpa.domain.entity.product.Comment;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;

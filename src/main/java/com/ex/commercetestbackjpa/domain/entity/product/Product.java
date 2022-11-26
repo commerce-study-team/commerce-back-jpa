@@ -2,13 +2,13 @@ package com.ex.commercetestbackjpa.domain.entity.product;
 
 import com.ex.commercetestbackjpa.domain.base.BaseEntity;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductDTO;
-import com.ex.commercetestbackjpa.domain.entity.comment.Comment;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ import java.util.Optional;
 @Getter
 @NoArgsConstructor
 @DynamicInsert
+@DynamicUpdate
 public class Product extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

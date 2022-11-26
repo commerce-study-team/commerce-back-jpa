@@ -1,12 +1,9 @@
 package com.ex.commercetestbackjpa.domain.dto.comment;
 
-import com.ex.commercetestbackjpa.domain.entity.comment.CommentImage;
-import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
+import com.ex.commercetestbackjpa.domain.entity.product.CommentImage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.constraints.NotBlank;
 
 public class CommentImageDTO {
 

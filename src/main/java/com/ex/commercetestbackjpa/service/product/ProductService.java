@@ -4,14 +4,14 @@ import com.ex.commercetestbackjpa.config.util.FileUtil;
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentImageDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
-import com.ex.commercetestbackjpa.domain.entity.comment.Comment;
-import com.ex.commercetestbackjpa.domain.entity.comment.CommentImage;
+import com.ex.commercetestbackjpa.domain.entity.product.Comment;
+import com.ex.commercetestbackjpa.domain.entity.product.CommentImage;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
-import com.ex.commercetestbackjpa.repository.comment.CommentImageRepository;
-import com.ex.commercetestbackjpa.repository.comment.CommentRepository;
+import com.ex.commercetestbackjpa.repository.product.CommentImageRepository;
+import com.ex.commercetestbackjpa.repository.product.CommentRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductImageRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
@@ -293,10 +293,7 @@ public class ProductService {
         }
 
         commentRepository.save(comment);
-
-        Long count = commentRepository.countByProduct(product); // 싱크를 맞추기 위해서 재검색.. 효율성 판단하여 제거 예정
-
-        product.updateCommentCount(count+1); // 집계로 처리?? Transaction 내에서 영속성 컨텍스트 값을 조회하여 + 처리하는게 맞는지 검토
+        product.updateCommentCount(product.getCommentCount()+1);
 
         return product.getProductNo();
     }

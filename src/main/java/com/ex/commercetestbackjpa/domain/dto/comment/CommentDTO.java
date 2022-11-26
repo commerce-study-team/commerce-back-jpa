@@ -1,9 +1,8 @@
 package com.ex.commercetestbackjpa.domain.dto.comment;
 
-import com.ex.commercetestbackjpa.domain.entity.comment.Comment;
+import com.ex.commercetestbackjpa.domain.entity.product.Comment;
 import lombok.*;
 
-import javax.persistence.*;
 import java.util.List;
 
 public class CommentDTO {
