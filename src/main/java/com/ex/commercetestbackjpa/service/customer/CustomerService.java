@@ -1,9 +1,9 @@
-package com.ex.commercetestbackjpa.service;
+package com.ex.commercetestbackjpa.service.customer;
 
 import com.ex.commercetestbackjpa.domain.entity.customer.Customer;
-import com.ex.commercetestbackjpa.domain.entity.customer.dto.CustomerRequestDto;
-import com.ex.commercetestbackjpa.domain.entity.customer.dto.CustomerResponseDto;
-import com.ex.commercetestbackjpa.repository.CustomerRepository;
+import com.ex.commercetestbackjpa.domain.dto.customer.CustomerRequestDto;
+import com.ex.commercetestbackjpa.domain.dto.customer.CustomerResponseDto;
+import com.ex.commercetestbackjpa.repository.customer.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
