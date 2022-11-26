@@ -1,9 +1,7 @@
 package com.ex.commercetestbackjpa;
 
-import com.ex.commercetestbackjpa.domain.entity.customer.Customer;
-import com.ex.commercetestbackjpa.domain.entity.customer.dto.CustomerRequestDto;
-import com.ex.commercetestbackjpa.domain.entity.customer.dto.CustomerResponseDto;
-import com.ex.commercetestbackjpa.repository.CustomerRepository;
+import com.ex.commercetestbackjpa.domain.dto.customer.CustomerRequestDto;
+import com.ex.commercetestbackjpa.repository.customer.CustomerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
