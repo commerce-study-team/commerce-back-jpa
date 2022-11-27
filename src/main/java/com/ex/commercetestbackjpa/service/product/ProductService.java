@@ -3,6 +3,7 @@ package com.ex.commercetestbackjpa.service.product;
 import com.ex.commercetestbackjpa.config.util.FileUtil;
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentImageDTO;
+import com.ex.commercetestbackjpa.domain.dto.common.RankDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.domain.entity.product.Comment;
 import com.ex.commercetestbackjpa.domain.entity.product.CommentImage;
@@ -10,7 +11,7 @@ import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
-import com.ex.commercetestbackjpa.repository.product.CommentImageRepository;
+import com.ex.commercetestbackjpa.repository.cache.CacheRepository;
 import com.ex.commercetestbackjpa.repository.product.CommentRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductImageRepository;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +43,7 @@ public class ProductService {
 
     private final CommentRepository commentRepository;
 
-    private final CommentImageRepository commentImageRepository;
+    private final CacheRepository redisRepository;
 
     /**
      * 상품 저장
@@ -267,6 +269,11 @@ public class ProductService {
         return productImage.getProduct().getProductNo();
     }
 
+    /**
+     * 상품평 등록
+     * @param commentRequestDto
+     * @return Long
+     */
     @Transactional
     public Long saveComment(CommentDTO.Request commentRequestDto) {
         Product product = productRepository.findById(commentRequestDto.getProductNo()).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
@@ -295,6 +302,39 @@ public class ProductService {
         commentRepository.save(comment);
         product.updateCommentCount(product.getCommentCount()+1);
 
+        // Redis를 통하여 상품평 Rank 관리
+        if (product.getSignFlag() != "99") {
+            redisRepository.sortSetAdd("productCommentRanking", String.valueOf(product.getProductNo()), product.getCommentCount());
+        }
+
         return product.getProductNo();
+    }
+
+    /**
+     * 상품평 변경
+     * @param commentRequestDto
+     * @return Long
+     */
+    @Transactional
+    public Long updateComment(CommentDTO.Request commentRequestDto) {
+
+        return 1L;
+    }
+
+    /**
+     * 상품평 삭제
+     * @param commentNo
+     * @return Long
+     */
+    @Transactional
+    public Long deleteComment(Long commentNo) {
+
+        return 1L;
+    }
+
+    public RankDTO.Response findProductRankList() {
+
+
+        return new RankDTO.Response();
     }
 }

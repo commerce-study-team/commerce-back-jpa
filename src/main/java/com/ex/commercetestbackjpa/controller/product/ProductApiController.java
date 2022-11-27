@@ -48,8 +48,20 @@ public class ProductApiController {
     }
 
     @ApiOperation(value = "상품 리뷰 저장")
-    @PostMapping("")
+    @PostMapping("/review")
     public Long saveProductComment(@RequestBody @Valid CommentDTO.Request commentRequestDTO) {
         return productService.saveComment(commentRequestDTO);
+    }
+
+    @ApiOperation(value = "상품 리뷰 변경")
+    @PatchMapping("/review")
+    public Long updateProductComment(@RequestBody @Valid CommentDTO.Request commentRequestDTO) {
+        return productService.updateComment(commentRequestDTO);
+    }
+
+    @ApiOperation(value = "상품 리뷰 삭제")
+    @DeleteMapping("/review/{commentNo}")
+    public Long deleteProductComment(@PathVariable Long commentNo) {
+        return productService.deleteComment(commentNo);
     }
 }
