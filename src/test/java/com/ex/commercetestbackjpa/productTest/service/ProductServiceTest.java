@@ -2,6 +2,7 @@ package com.ex.commercetestbackjpa.productTest.service;
 
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentImageDTO;
+import com.ex.commercetestbackjpa.domain.dto.common.RankDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.junit.jupiter.api.Test;
@@ -130,7 +131,7 @@ public class ProductServiceTest {
     void 키워드검색() {
         Map<String, String> filterMap = new HashMap<>();
 
-        filterMap.put("keyword", "키워드 검색 테스트");
+        filterMap.put("keyword", "인기검색테스트2");
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "productNo");
 
         List<ProductDTO.Response> list = productService.findProductByFilters(filterMap, pageable);
@@ -333,5 +334,15 @@ public class ProductServiceTest {
 
         ProductDTO.Response productResponseDTO = productService.findProductByProductNo(1L);
         assertThat(productResponseDTO.getProductCommentResponseDtoList().size()).isNotZero();
+    }
+
+    @Test
+    void 인기검색어조회() {
+        List<RankDTO.Response> responses = productService.searchRankList();
+
+        for(RankDTO.Response response : responses) {
+            System.out.println("인기검색어 : " + response.getItemId());
+            System.out.println("인기검색어 score : " + response.getScore());
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.ex.commercetestbackjpa.controller.product;
 
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
+import com.ex.commercetestbackjpa.domain.dto.common.RankDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.ProductDTO;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import io.swagger.annotations.Api;
@@ -64,4 +65,11 @@ public class ProductApiController {
     public Long deleteProductComment(@PathVariable Long commentNo) {
         return productService.deleteComment(commentNo);
     }
+
+    @ApiOperation(value = "인기검색어 조회")
+    @GetMapping("/searchRank")
+    public List<RankDTO.Response> SearchRankList() {
+        return productService.searchRankList();
+    }
+
 }

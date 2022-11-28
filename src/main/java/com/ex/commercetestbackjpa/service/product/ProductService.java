@@ -105,6 +105,11 @@ public class ProductService {
         List<ProductDTO.Response> result = new ArrayList<>();
         Page<Product> productList = productRepository.findByFilters(filterMap, pageable);
 
+        // Redis를 통하여 상품평 Rank 관리
+        if (!filterMap.get("keyword").isEmpty()) {
+            redisRepository.sortSetAdd("searchRank", filterMap.get("keyword"), 1L);
+        }
+
         for(Product product : productList.getContent()) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
 
@@ -302,12 +307,15 @@ public class ProductService {
         commentRepository.save(comment);
         product.updateCommentCount(product.getCommentCount()+1);
 
-        // Redis를 통하여 상품평 Rank 관리
-        if (product.getSignFlag() != "99") {
-            redisRepository.sortSetAdd("productCommentRanking", String.valueOf(product.getProductNo()), product.getCommentCount());
-        }
-
         return product.getProductNo();
+    }
+
+    /**
+     * 인기검색어 조회
+     * @return List<RankDTO.Response>
+     */
+    public List<RankDTO.Response> searchRankList() {
+        return redisRepository.sortSetFind("searchRank");
     }
 
     /**
@@ -330,11 +338,5 @@ public class ProductService {
     public Long deleteComment(Long commentNo) {
 
         return 1L;
-    }
-
-    public RankDTO.Response findProductRankList() {
-
-
-        return new RankDTO.Response();
     }
 }

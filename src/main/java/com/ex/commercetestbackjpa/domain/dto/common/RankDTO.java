@@ -1,8 +1,9 @@
 package com.ex.commercetestbackjpa.domain.dto.common;
 
-import com.ex.commercetestbackjpa.domain.entity.common.Code;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.redis.core.ZSetOperations;
 
 public class RankDTO {
 
@@ -10,9 +11,14 @@ public class RankDTO {
     @Setter
     public static class Response {
 
-        private Long itemId;
+        private String itemId;
 
-        private Long score;
+        private Double score;
+
+        public Response(ZSetOperations.TypedTuple<String> typedTuples) {
+            this.setItemId(typedTuples.getValue());
+            this.setScore(typedTuples.getScore());
+        }
 
     }
 }
