@@ -25,6 +25,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Slf4j
@@ -314,8 +315,9 @@ public class ProductService {
      * 인기검색어 조회
      * @return List<RankDTO.Response>
      */
-    public List<RankDTO.Response> searchRankList() {
-        return redisRepository.sortSetFind("searchRank");
+    public List<RankDTO.Response> searchRankList(LocalDate date) {
+
+        return redisRepository.sortSetFind("searchRank"+ Optional.ofNullable(date).orElse(LocalDate.now()));
     }
 
     /**

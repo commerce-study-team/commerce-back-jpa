@@ -15,6 +15,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -338,7 +339,7 @@ public class ProductServiceTest {
 
     @Test
     void 인기검색어조회() {
-        List<RankDTO.Response> responses = productService.searchRankList();
+        List<RankDTO.Response> responses = productService.searchRankList(LocalDate.now().minusDays(1));
 
         for(RankDTO.Response response : responses) {
             System.out.println("인기검색어 : " + response.getItemId());

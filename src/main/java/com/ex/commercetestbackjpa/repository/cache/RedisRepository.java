@@ -31,7 +31,7 @@ public class RedisRepository implements CacheRepository {
     @Override
     public List<RankDTO.Response> sortSetFind(String key) {
 
-        Set<ZSetOperations.TypedTuple<String>> typedTuples = redisTemplate.opsForZSet().reverseRangeWithScores(getKey(key), 0, 9);
+        Set<ZSetOperations.TypedTuple<String>> typedTuples = redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, 9);
         return typedTuples.stream().map(m -> new RankDTO.Response(m)).collect(Collectors.toList());
     }
 

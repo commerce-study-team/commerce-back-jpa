@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.data.web.PageableDefault;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -68,8 +69,8 @@ public class ProductApiController {
 
     @ApiOperation(value = "인기검색어 조회")
     @GetMapping("/searchRank")
-    public List<RankDTO.Response> SearchRankList() {
-        return productService.searchRankList();
+    public List<RankDTO.Response> SearchRankList(@RequestParam(value = "date", required = false)LocalDate date) {
+        return productService.searchRankList(date);
     }
 
 }
