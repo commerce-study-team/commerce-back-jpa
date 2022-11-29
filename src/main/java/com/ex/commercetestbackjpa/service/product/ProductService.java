@@ -1,11 +1,18 @@
 package com.ex.commercetestbackjpa.service.product;
 
 import com.ex.commercetestbackjpa.config.util.FileUtil;
+import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
+import com.ex.commercetestbackjpa.domain.dto.comment.CommentImageDTO;
+import com.ex.commercetestbackjpa.domain.dto.common.RankDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
+import com.ex.commercetestbackjpa.domain.entity.product.Comment;
+import com.ex.commercetestbackjpa.domain.entity.product.CommentImage;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
+import com.ex.commercetestbackjpa.repository.cache.CacheRepository;
+import com.ex.commercetestbackjpa.repository.product.CommentRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductImageRepository;
 import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
@@ -14,16 +21,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -33,6 +41,10 @@ public class ProductService {
     private final ProductPriceRepository productPriceRepository;
 
     private final ProductImageRepository productImageRepository;
+
+    private final CommentRepository commentRepository;
+
+    private final CacheRepository redisRepository;
 
     /**
      * 상품 저장
@@ -44,7 +56,7 @@ public class ProductService {
         Product product = productRequestDto.toEntity();
         List<ProductDtDTO.Request> productDTRequestDtoList = productRequestDto.getProductDtRequestDtoList();
         List<ProductPriceDTO.Request> productPriceRequestDtoList = productRequestDto.getProductPriceRequestDtoList();
-        List<ProductImageDTO.Request> productImageRequestDtoList = productRequestDto.getProductImageRequestDtoList();
+        Optional<List<ProductImageDTO.Request>> productImageRequestDtoList = Optional.ofNullable(productRequestDto.getProductImageRequestDtoList());
 
         Long productNo = productRepository.save(product).getProductNo();
 
@@ -55,50 +67,77 @@ public class ProductService {
         this.saveProductPrice(productPriceRequestDtoList, productNo);
 
         // 이미지는 필수가 아니기 때문에 데이터 있을 때 저장
-        if(productImageRequestDtoList != null) {
-            this.saveProductImage(productImageRequestDtoList, productNo);
-        }
+        productImageRequestDtoList.ifPresent(n -> this.saveProductImage(n, productNo));
+
 
         return productNo;
     }
 
     /**
-     * 상품 List 조회
+     * ADMIN 상품 List 조회
      * @param filterMap
      * @param pageable
-     * @return Map<String, Object>
+     * @return List<ProductDTO.Response>
      */
-    @Transactional(readOnly = true)
-    public List<ProductDTO.Response> findProductByFilters(Map<String, String> filterMap, Pageable pageable) {
+    public List<ProductDTO.Response> findProductForManage(Map<String, String> filterMap, Pageable pageable) {
         List<ProductDTO.Response> result = new ArrayList<>();
         Page<Product> productList = productRepository.findByFilters(filterMap, pageable);
 
         for(Product product : productList.getContent()) {
             ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
 
-            // 단품
-            productResponseDto.setProductDtResponseDtoList(
-                    product.getProductDtList().stream().map(n -> new ProductDtDTO.Response(n)).collect(Collectors.toList())
-            );
-
-            // 가격
-            productResponseDto.setProductPriceResponseDto(
-                    new ProductPriceDTO.Response((product.getProductPriceList().stream()
-                            .filter(n -> n.getUseYn() == true)
-                            .filter(n -> n.getApplyDate().isBefore(LocalDateTime.now()))
-                            .max(Comparator.comparing(ProductPrice::getApplyDate))
-                            .orElseThrow(() -> new NoSuchElementException("가격 정보를 찾을 수 없습니다."))))
-            );
-
-            // 이미지
-            productResponseDto.setProductImageResponseDtoList(
-                    product.getProductImageList().stream().map(n -> new ProductImageDTO.Response(n)).collect(Collectors.toList())
-            );
+            productResponseDto.addProductDtDtos(product.getProductDtList());
+            productResponseDto.addCurrentProductPrice(product.getProductPriceList());
+            productResponseDto.addProductImageDtos(product.getProductImageList());
 
             result.add(productResponseDto);
         }
 
         return result;
+    }
+
+    /**
+     * 상품 List 조회
+     * @param filterMap
+     * @param pageable
+     * @return List<ProductDTO.Response>
+     */
+    public List<ProductDTO.Response> findProductByFilters(Map<String, String> filterMap, Pageable pageable) {
+        List<ProductDTO.Response> result = new ArrayList<>();
+        Page<Product> productList = productRepository.findByFilters(filterMap, pageable);
+
+        // Redis를 통하여 상품평 Rank 관리
+        if (!filterMap.get("keyword").isEmpty()) {
+            redisRepository.sortSetAdd("searchRank", filterMap.get("keyword"), 1L);
+        }
+
+        for(Product product : productList.getContent()) {
+            ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
+
+            productResponseDto.addCurrentProductPrice(product.getProductPriceList());
+            productResponseDto.addProductImageDtos(product.getProductImageList());
+
+            result.add(productResponseDto);
+        }
+
+        return result;
+    }
+
+    /**
+     * 상품 List 조회
+     * @param productNo
+     * @return ProductDTO.Response
+     */
+    public ProductDTO.Response findProductByProductNo(Long productNo) {
+        Product product = productRepository.findById(productNo).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
+        ProductDTO.Response productResponseDto = new ProductDTO.Response(product);
+
+        productResponseDto.addProductDtDtos(product.getProductDtList());
+        productResponseDto.addCurrentProductPrice(product.getProductPriceList());
+        productResponseDto.addProductImageDtos(product.getProductImageList());
+        productResponseDto.addProductCommentDtos(product.getProductCommentList());
+
+        return productResponseDto;
     }
 
     /**
@@ -110,12 +149,7 @@ public class ProductService {
     public Long updateProduct(ProductDTO.Request productRequestDto) {
         Product product = productRepository.findById(productRequestDto.getProductNo()).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
 
-        product.updateProductName(productRequestDto.getProductName());
-        product.updateKeyword(productRequestDto.getKeyword());
-        product.updateSaleFlag(productRequestDto.getSaleFlag());
-        product.updateLMSgroup(productRequestDto.getLgroup(), productRequestDto.getMgroup(), productRequestDto.getSgroup());
-        product.updateMaxBuy(product.getMaxBuy());
-        product.updateSignFlag(product.getSignFlag());
+        product.updateProductOptions(productRequestDto);
 
         return product.getProductNo();
     }
@@ -133,7 +167,6 @@ public class ProductService {
         for(ProductDtDTO.Request productDtDto : productDTRequestDtoList) {
             ProductDT productDt = productDtDto.toEntity();
             productDt.settingProduct(product);
-            System.out.println(product.getProductDtList().get(0));
             productDtRepository.save(productDt);
         }
 
@@ -150,9 +183,8 @@ public class ProductService {
     public Long updateProductDt(List<ProductDtDTO.Request> productDTRequestDtoList, Long productNo) {
         for(ProductDtDTO.Request productDTRequestDto : productDTRequestDtoList) {
             ProductDT productDt = productDtRepository.findById(productDTRequestDto.getProductDtNo()).orElseThrow(() -> new NoSuchElementException("단품 정보를 찾을 수 없습니다."));
-            productDt.updateColor(productDTRequestDto.getColorCode(), productDTRequestDto.getColorName());
-            productDt.updateSize(productDTRequestDto.getSizeCode(), productDTRequestDto.getSizeName());
-            productDt.updateSaleFlag(productDTRequestDto.getSaleFlag());
+
+            productDt.updateProductDtOptions(productDTRequestDto);
         }
 
         return productNo;
@@ -227,6 +259,11 @@ public class ProductService {
         return productNo;
     }
 
+    /**
+     * 상품 이미지 삭제
+     * @param productImageNo
+     * @return Long
+     */
     @Transactional
     public Long deleteProductImage(Long productImageNo) {
         ProductImage productImage = productImageRepository.findById(productImageNo).orElseThrow(() -> new NoSuchElementException("상품 이미지를 찾을 수 없습니다."));
@@ -236,5 +273,72 @@ public class ProductService {
         }
 
         return productImage.getProduct().getProductNo();
+    }
+
+    /**
+     * 상품평 등록
+     * @param commentRequestDto
+     * @return Long
+     */
+    @Transactional
+    public Long saveComment(CommentDTO.Request commentRequestDto) {
+        Product product = productRepository.findById(commentRequestDto.getProductNo()).orElseThrow(() -> new NoSuchElementException("상품 정보를 찾을 수 없습니다."));
+
+        // 회원 데이터 체크 로직 추가 예정
+        // Customer customer = customerRepository.findById(commentRequestDto.getCustNo()).orElseThrow(() -> new NoSuchElementException("회원 정보를 찾을 수 없습니다."));
+
+        // 주문 데이터 체크 로직 추가 예정
+        // 고객이 해당 주문 건으로 작성한 리뷰가 있는지 확인
+        // Order order = orderRepository.findById(commentRequestDto.getOrderNo()).orElseThrow(() -> new NoSuchElementException("주문 정보를 찾을 수 없습니다."));
+
+        // 비회원 주문일 경우 분기 처리 예정?? 비회원 주문 가능하게 변경 될 경우 수정 필요
+
+        Comment comment = commentRequestDto.toEntity();
+
+        comment.settingProduct(product);
+        comment.settingCustomer(commentRequestDto.getCustNo());
+        comment.settingOrder(commentRequestDto.getOrderNo());
+
+        for(CommentImageDTO.Request commentImageDTO : commentRequestDto.getCommentImageRequestDtoList()) {
+            CommentImage commentImage = commentImageDTO.toEntity();
+            commentImage.settingImageName(FileUtil.uploadFile(commentImageDTO.getImgFile()));
+            comment.addCommentImage(commentImage);
+        }
+
+        commentRepository.save(comment);
+        product.updateCommentCount(product.getCommentCount()+1);
+
+        return product.getProductNo();
+    }
+
+    /**
+     * 인기검색어 조회
+     * @return List<RankDTO.Response>
+     */
+    public List<RankDTO.Response> searchRankList(LocalDate date) {
+
+        return redisRepository.sortSetFind("searchRank"+ Optional.ofNullable(date).orElse(LocalDate.now()));
+    }
+
+    /**
+     * 상품평 변경
+     * @param commentRequestDto
+     * @return Long
+     */
+    @Transactional
+    public Long updateComment(CommentDTO.Request commentRequestDto) {
+
+        return 1L;
+    }
+
+    /**
+     * 상품평 삭제
+     * @param commentNo
+     * @return Long
+     */
+    @Transactional
+    public Long deleteComment(Long commentNo) {
+
+        return 1L;
     }
 }

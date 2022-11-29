@@ -1,25 +1,29 @@
 package com.ex.commercetestbackjpa.domain.entity.product;
 
 import com.ex.commercetestbackjpa.domain.base.BaseEntity;
+import com.ex.commercetestbackjpa.domain.dto.product.ProductDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Entity(name="tproduct")
+@Entity
+@Table(name="tproduct")
 @Getter
 @NoArgsConstructor
 @DynamicInsert
+@DynamicUpdate
 public class Product extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 10)
     private Long productNo;
 
     @Column(nullable = false, length = 100)
@@ -53,17 +57,21 @@ public class Product extends BaseEntity {
     @ColumnDefault("'00'")
     private String signFlag;
 
-    @BatchSize(size=10)
+    @BatchSize(size=100)
     @OneToMany(mappedBy = "product")
     private List<ProductDT> productDtList = new ArrayList<>();
 
-    @BatchSize(size=10)
+    @BatchSize(size=100)
     @OneToMany(mappedBy = "product")
     private List<ProductPrice> productPriceList = new ArrayList<>();
 
-    @BatchSize(size=10)
+    @BatchSize(size=100)
     @OneToMany(mappedBy = "product")
     private List<ProductImage> productImageList = new ArrayList<>();
+
+    @BatchSize(size=100)
+    @OneToMany(mappedBy = "product")
+    private List<Comment> productCommentList = new ArrayList<>();
 
     @Transient
     private ProductPrice productPrice;
@@ -78,33 +86,47 @@ public class Product extends BaseEntity {
         this.keyword = keyword;
     }
 
+    public void updateProductOptions(ProductDTO.Request productRequestDto) {
+        this.updateProductName(productRequestDto.getProductName());
+        this.updateLMSgroup(productRequestDto.getLgroup(), productRequestDto.getMgroup(), productRequestDto.getSgroup());
+        this.updateMaxBuy(productRequestDto.getMaxBuy());
+        this.updateKeyword(productRequestDto.getKeyword());
+        this.updateSaleFlag(productRequestDto.getSaleFlag());
+        this.updateSignFlag(productRequestDto.getSignFlag());
+    }
+
     public void updateProductName(String productName) {
-        this.productName = productName;
+        Optional.ofNullable(productName).ifPresent(p -> this.productName = p);
     }
 
     public void updateLMSgroup(String lgroup, String mgroup, String sgroup) {
-        this.lgroup = lgroup;
-        this.mgroup = mgroup;
-        this.sgroup = sgroup;
+        Optional.ofNullable(lgroup).ifPresent(l -> this.lgroup = l);
+        Optional.ofNullable(mgroup).ifPresent(m -> this.mgroup = m);
+        Optional.ofNullable(sgroup).ifPresent(s -> this.sgroup = s);
     }
 
     public void updateMaxBuy(int maxBuy) {
-        this.maxBuy = maxBuy;
+        Optional.ofNullable(maxBuy).ifPresent(m -> this.maxBuy = m);
     }
 
     public void updateKeyword(String keyword) {
-        this.keyword = keyword;
+        Optional.ofNullable(keyword).ifPresent(k -> this.keyword = k);
+
     }
 
     public void updateSaleFlag(String saleFlag) {
-        this.saleFlag = saleFlag;
+        Optional.ofNullable(saleFlag).ifPresent(s -> this.saleFlag = s);
     }
 
     public void updateSignFlag(String signFlag) {
-        this.signFlag = signFlag;
+        Optional.ofNullable(signFlag).ifPresent(s -> this.signFlag = s);
     }
 
     public void addApplyProductPrice(ProductPrice productPrice) {
-        this.productPrice = productPrice;
+        Optional.ofNullable(productPrice).ifPresent(p -> this.productPrice = p);
+    }
+
+    public void updateCommentCount(Long commentCount) {
+        Optional.ofNullable(commentCount).ifPresent(c -> this.commentCount = c);
     }
 }

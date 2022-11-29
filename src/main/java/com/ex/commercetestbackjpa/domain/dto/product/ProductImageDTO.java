@@ -19,15 +19,15 @@ public class ProductImageDTO {
 
         private Long productImageNo;
 
-        @ApiModelProperty(value = "이미지명", required = true)
+        @ApiModelProperty(value = "이미지명")
         @NotBlank(message = "이미지명는 필수 입력값입니다.")
         private String imageName;
 
-        @ApiModelProperty(value = "실제 이미지명", required = true)
+        @ApiModelProperty(value = "실제 이미지명")
         @NotBlank(message = "이미지명는 필수 입력값입니다.")
         private String imageRealName;
 
-        @ApiModelProperty(value = "사용여부", example = "base")
+        @ApiModelProperty(value = "사용여부")
         private Boolean useYn;
 
         private MultipartFile imgFile;

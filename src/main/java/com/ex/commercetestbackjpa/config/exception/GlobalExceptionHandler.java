@@ -7,12 +7,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ValidationException;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ExceptionResponseDTO> validationExceptionHandler(ValidationException e) {
+        ExceptionResponseDTO exceptionDTO = ExceptionResponseDTO.builder()
+                .code("valid Exception!!!")
+                .massage(e.getMessage()).build();
+        log.error(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDTO);
+    }
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ExceptionResponseDTO> NullPointerExceptionHandler(NullPointerException e) {

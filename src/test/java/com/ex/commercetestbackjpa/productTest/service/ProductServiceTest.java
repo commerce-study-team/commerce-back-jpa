@@ -1,5 +1,8 @@
 package com.ex.commercetestbackjpa.productTest.service;
 
+import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
+import com.ex.commercetestbackjpa.domain.dto.comment.CommentImageDTO;
+import com.ex.commercetestbackjpa.domain.dto.common.RankDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.junit.jupiter.api.Test;
@@ -11,9 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -34,7 +36,7 @@ public class ProductServiceTest {
         List<ProductImageDTO.Request> productImageRequestDtoList = new ArrayList<>();
 
         // 상품 데이터
-        productRequestDto.setProductName("테스트 상품");
+        productRequestDto.setProductName("키워드 검색 테스트");
         productRequestDto.setKeyword("테스트");
         productRequestDto.setLgroup("10");
         productRequestDto.setMgroup("10");
@@ -86,11 +88,7 @@ public class ProductServiceTest {
                 "테스트.png", "image/png",
                 new FileInputStream(filePath));
 
-
-        UUID uuid = UUID.randomUUID();
-        productImageRequestDto.setImageName(uuid + "테스트.png");
         productImageRequestDto.setImgFile(multipartFile);
-
         productImageRequestDtoList.add(productImageRequestDto);
         // 이미지 데이터 END
 
@@ -104,7 +102,6 @@ public class ProductServiceTest {
     @Test
     public void 상품정보변경() {
         ProductDTO.Request productRequestDto = new ProductDTO.Request();
-        Map<String, String> map = new HashMap<>();
 
         productRequestDto.setProductNo(1L);
         productRequestDto.setProductName("테스트 상품 변경");
@@ -117,40 +114,31 @@ public class ProductServiceTest {
 
         Long productNo = productService.updateProduct(productRequestDto);
 
-        map.put("productNo", productNo.toString());
-
-        ProductDTO.Response changeProductDTO = this.findProductByFilterProxy(map).get(0);
+        ProductDTO.Response changeProductDTO = productService.findProductByProductNo(productNo);
 
         assertThat(productRequestDto.getProductName()).isEqualTo(changeProductDTO.getProductName());
     }
 
     @Test
     void 단일상품검색() {
-        Map<String, String> map = new HashMap<>();
-        map.put("productNo", "1");
-        ProductDTO.Response productResponseDto = this.findProductByFilterProxy(map).get(0);
-        List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
-        ProductPriceDTO.Response productPriceResponseDto = productResponseDto.getProductPriceResponseDto();
+        ProductDTO.Response productResponseDto = productService.findProductByProductNo(1L);
 
         assertThat(productResponseDto.getProductNo()).isNotNull();
-        assertThat(productDtResponseDtoList.get(0).getProductDtNo()).isNotNull();
-        assertThat(productPriceResponseDto.getProductPriceNo()).isNotNull();
+        assertThat(productResponseDto.getProductDtResponseDtoList().get(0).getProductDtNo()).isNotNull();
+        assertThat(productResponseDto.getProductPriceResponseDto().getProductPriceNo()).isNotNull();
     }
 
     @Test
     void 키워드검색() {
         Map<String, String> filterMap = new HashMap<>();
 
-        filterMap.put("keyword", "테스트");
+        filterMap.put("keyword", "인기검색테스트2");
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "productNo");
 
         List<ProductDTO.Response> list = productService.findProductByFilters(filterMap, pageable);
 
         for(ProductDTO.Response pr : list) {
             assertThat(pr.getKeyword()).isEqualTo("테스트");
-            assertThat(pr.getProductDtResponseDtoList().get(0).getProductDtNo()).isNotNull();
-            assertThat(pr.getProductPriceResponseDto().getProductPriceNo()).isNotNull();
-            System.out.println(pr.getProductNo());
         }
     }
 
@@ -166,8 +154,6 @@ public class ProductServiceTest {
 
     @Test
     void 단품저장() {
-        Map<String, String> map = new HashMap<>();
-        map.put("productNo", "1");
         List<ProductDtDTO.Request> productDTRequestDtoList = new ArrayList<>();
         ProductDtDTO.Request productDTRequestDto1 = new ProductDtDTO.Request();
         productDTRequestDto1.setProductDtName("연두붕어빵");
@@ -190,7 +176,7 @@ public class ProductServiceTest {
 
         Long productNo = productService.saveProductDt(productDTRequestDtoList, 1L);
 
-        ProductDTO.Response productResponseDto = this.findProductByFilterProxy(map).get(0);
+        ProductDTO.Response productResponseDto = productService.findProductByProductNo(productNo);
         List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
 
         assertThat(productDtResponseDtoList.size()).isNotZero();
@@ -225,9 +211,9 @@ public class ProductServiceTest {
 
         list.add(productDTRequestDto);
 
-        productService.updateProductDt(list, 1L);
+        Long productNo = productService.updateProductDt(list, 1L);
 
-        ProductDtDTO.Response productDtResponseDto = productService.findProductDtByProductDtNo(1L);
+        ProductDtDTO.Response productDtResponseDto = productService.findProductDtByProductDtNo(productNo);
 
         assertThat(productDTRequestDto.getColorCode()).isEqualTo(productDtResponseDto.getColorCode());
         assertThat(productDTRequestDto.getSizeCode()).isEqualTo(productDtResponseDto.getSizeCode());
@@ -250,8 +236,6 @@ public class ProductServiceTest {
 
     @Test
     void 상품가격사용여부변경() {
-        Map<String, String> map = new HashMap<>();
-        map.put("productNo", "1");
         List<ProductPriceDTO.Request> list = new ArrayList<>();
         ProductPriceDTO.Request productPriceRequestDTO = new ProductPriceDTO.Request();
         productPriceRequestDTO.setProductPriceNo(1L);
@@ -260,17 +244,15 @@ public class ProductServiceTest {
         productPriceRequestDTO.setUseYn(true);
         list.add(productPriceRequestDTO);
 
-        productService.updateProductPrice(list, 1L);
+        Long productNo = productService.updateProductPrice(list, 1L);
 
-        ProductDTO.Response productDTO= this.findProductByFilterProxy(map).get(0);
+        ProductDTO.Response productDTO= productService.findProductByProductNo(productNo);
 
         assertThat(productDTO.getProductPriceResponseDto().getUseYn()).isEqualTo(true);
     }
 
     @Test
     void 가격저장() {
-        Map<String, String> map = new HashMap<>();
-        map.put("productNo", "1");
         List<ProductPriceDTO.Request> productPriceRequestDtoList = new ArrayList<>();
         // 가격 데이터
         ProductPriceDTO.Request productPriceRequestDto1 = new ProductPriceDTO.Request();
@@ -291,20 +273,77 @@ public class ProductServiceTest {
 
         Long productNo = productService.saveProductPrice(productPriceRequestDtoList, 1L);
 
-        ProductDTO.Response productResponseDto = this.findProductByFilterProxy(map).get(0);
-        List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
+        ProductDTO.Response productResponseDto = productService.findProductByProductNo(productNo);
+        ProductPriceDTO.Response productPriceResponseDto = productResponseDto.getProductPriceResponseDto();
 
-        assertThat(productDtResponseDtoList.size()).isNotZero();
+        assertThat(productPriceResponseDto).isNotNull();
     }
 
-    private List<ProductDTO.Response> findProductByFilterProxy(Map<String, String> map) {
-        Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "productNo");
+    @Test
+    void 상품이미지저장() throws Exception {
+        List<ProductImageDTO.Request> productImageRequestDtoList = new ArrayList<>();
+        // 이미지 데이터 -- MockObject 생성
+        ProductImageDTO.Request productImageRequestDto = new ProductImageDTO.Request();
+        productImageRequestDto.setImageRealName("테스트.png");
 
-        return productService.findProductByFilters(map, pageable);
+        String filePath = "src/test/resources/testImage/test.png";
+        MockMultipartFile multipartFile = new MockMultipartFile("image",
+                "테스트.png", "image/png",
+                new FileInputStream(filePath));
+
+        productImageRequestDto.setImgFile(multipartFile);
+        productImageRequestDtoList.add(productImageRequestDto);
+        // 이미지 데이터 END
+
+        Long productNo = productService.saveProductImage(productImageRequestDtoList, 2L);
+
+        assertThat(productService.findProductByProductNo(productNo).getProductImageResponseDtoList().size()).isNotZero();
     }
 
     @Test
     void 상품이미지제거() {
         Long productNo = productService.deleteProductImage(2L);
+    }
+
+    @Test
+    void 상품평저장() throws Exception {
+        CommentDTO.Request commentRequestDto = new CommentDTO.Request();
+        List<CommentImageDTO.Request> commentImageRequestDtos = new ArrayList<>();
+        commentRequestDto.setTitle("상품평 남깁니다!");
+        commentRequestDto.setContent("상품 품질 정말 좋네요");
+        commentRequestDto.setGrade(5);
+        commentRequestDto.setCustNo(1L);
+        commentRequestDto.setProductNo(1L);
+        commentRequestDto.setOrderNo(1L);
+
+        // 이미지 데이터 -- MockObject 생성
+        CommentImageDTO.Request commentImageRequestDto = new CommentImageDTO.Request();
+        commentImageRequestDto.setImageRealName("테스트.png");
+
+        String filePath = "src/test/resources/testImage/test.png";
+        MockMultipartFile multipartFile = new MockMultipartFile("image",
+                "테스트.png", "image/png",
+                new FileInputStream(filePath));
+
+        commentImageRequestDto.setImgFile(multipartFile);
+        commentImageRequestDtos.add(commentImageRequestDto);
+        // 이미지 데이터 END
+
+        commentRequestDto.setCommentImageRequestDtoList(commentImageRequestDtos);
+
+        Long productNo = productService.saveComment(commentRequestDto);
+
+        ProductDTO.Response productResponseDTO = productService.findProductByProductNo(1L);
+        assertThat(productResponseDTO.getProductCommentResponseDtoList().size()).isNotZero();
+    }
+
+    @Test
+    void 인기검색어조회() {
+        List<RankDTO.Response> responses = productService.searchRankList(LocalDate.now().minusDays(1));
+
+        for(RankDTO.Response response : responses) {
+            System.out.println("인기검색어 : " + response.getItemId());
+            System.out.println("인기검색어 score : " + response.getScore());
+        }
     }
 }
