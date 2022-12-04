@@ -12,7 +12,7 @@ public class CustomerRepositoryTest {
     @Autowired
     CustomerRepository customerRepository;
 
-    @Test
+    //@Test
     public void testClass(){
         CustomerRequestDto customerRequestDto = new CustomerRequestDto();
 

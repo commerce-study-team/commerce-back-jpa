@@ -1,6 +1,7 @@
 package com.ex.commercetestbackjpa.domain.entity.customer;
 
 import com.ex.commercetestbackjpa.domain.base.BaseEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 
 @Entity(name="tcustomer")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Customer extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +19,8 @@ public class Customer extends BaseEntity {
     @Column(nullable = false, length = 20, unique = true)
     private String email;
     @Column(nullable = false, length = 20)
+    private String customerId;
+    @Column(nullable = false, length = 20)
     private String password; // TODO 암호화는 나중에..
     @Column(nullable = false, length = 20)
     private String name;
@@ -25,11 +28,14 @@ public class Customer extends BaseEntity {
     @ColumnDefault("1")
     private boolean useYn;
 
+    @Enumerated(EnumType.STRING)
+    private CustomerRole customerRole;
+
     // CreatedBy, LastModifiedBy 추후에 추가
 
     // private으로 외부에서 생성자 못쓰게 막음
-    private Customer(String userId, String password, String name) {
-        this.email = userId;
+    private Customer(String customerId, String password, String name) {
+        this.customerId = customerId;
         this.password = password;
         this.name = name;
     }
@@ -49,7 +55,7 @@ public class Customer extends BaseEntity {
     public void delete() {
         this.useYn = false;
     }
-    
+
     // 비교이슈
     @Override
     public boolean equals(Object obj) {
