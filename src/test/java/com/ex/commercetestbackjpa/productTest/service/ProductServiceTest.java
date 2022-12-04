@@ -339,7 +339,7 @@ public class ProductServiceTest {
 
     @Test
     void 인기검색어조회() {
-        List<RankDTO.Response> responses = productService.searchRankList(LocalDate.now().minusDays(1));
+        List<RankDTO.Response> responses = productService.searchRankList(LocalDate.now());
 
         for(RankDTO.Response response : responses) {
             System.out.println("인기검색어 : " + response.getItemId());
@@ -362,7 +362,6 @@ public class ProductServiceTest {
         // 이미지 데이터 -- MockObject 생성
         CommentImageDTO.Request commentImageRequestDto = new CommentImageDTO.Request();
         commentImageRequestDto.setImageRealName("테스트수정.png");
-        commentImageRequestDto.setCommentImageNo(31L);
 
         String filePath = "src/test/resources/testImage/test.png";
         MockMultipartFile multipartFile = new MockMultipartFile("image",
@@ -370,7 +369,7 @@ public class ProductServiceTest {
                 new FileInputStream(filePath));
 
         commentImageRequestDto.setImgFile(multipartFile);
-        commentImageRequestDto.setRemove(true);
+        commentImageRequestDto.setRemove(false);
         commentImageRequestDtos.add(commentImageRequestDto);
         // 이미지 데이터 END
 
@@ -380,6 +379,13 @@ public class ProductServiceTest {
 
         ProductDTO.Response productResponseDTO = productService.findProductByProductNo(1L);
         assertThat(productResponseDTO.getProductCommentResponseDtoList().size()).isNotZero();
+
+    }
+
+    @Test
+    void 상품평삭제() {
+        productService.deleteComment(5L);
+
 
     }
 }

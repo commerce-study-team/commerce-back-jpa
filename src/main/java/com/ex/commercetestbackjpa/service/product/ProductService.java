@@ -353,8 +353,12 @@ public class ProductService {
      */
     @Transactional
     public Long deleteComment(Long commentNo) {
-        commentRepository.deleteById(commentNo);
+        Comment comment = commentRepository.findById(commentNo).orElseThrow(() -> new NoSuchElementException("상품평 정보를 찾을 수 없습니다."));
+        Product product = comment.getProduct();
 
-        return 1L;
+        commentRepository.deleteById(commentNo);
+        product.updateCommentCount(product.getCommentCount() - 1);
+
+        return product.getProductNo();
     }
 }
