@@ -12,11 +12,7 @@ import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
 import com.ex.commercetestbackjpa.repository.cache.CacheRepository;
-import com.ex.commercetestbackjpa.repository.product.CommentRepository;
-import com.ex.commercetestbackjpa.repository.product.ProductDtRepository;
-import com.ex.commercetestbackjpa.repository.product.ProductImageRepository;
-import com.ex.commercetestbackjpa.repository.product.ProductPriceRepository;
-import com.ex.commercetestbackjpa.repository.product.ProductRepository;
+import com.ex.commercetestbackjpa.repository.product.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -43,6 +39,8 @@ public class ProductService {
     private final ProductImageRepository productImageRepository;
 
     private final CommentRepository commentRepository;
+
+    private final CommentImageRepository commentImageRepository;
 
     private final CacheRepository redisRepository;
 
@@ -327,8 +325,25 @@ public class ProductService {
      */
     @Transactional
     public Long updateComment(CommentDTO.Request commentRequestDto) {
+        List<CommentImageDTO.Request> commentImageList = commentRequestDto.getCommentImageRequestDtoList();
+        Comment comment = commentRepository.findById(commentRequestDto.getCommnetNo()).orElseThrow(() -> new NoSuchElementException("상품평 정보를 찾을 수 없습니다."));
 
-        return 1L;
+        comment.updateCommentOptions(commentRequestDto);
+
+        if(!commentImageList.isEmpty()) {
+            for(CommentImageDTO.Request commentImage : commentImageList) {
+                if(!commentImage.getRemove()) {
+                    CommentImage commentImageEntity = commentImage.toEntity();
+                    commentImageEntity.settingImageName(FileUtil.uploadFile(commentImage.getImgFile()));
+                    comment.addCommentImage(commentImageEntity);
+                } else {
+                    FileUtil.deleteFile(commentImage.getImageName());
+                    commentImageRepository.deleteById(commentImage.getCommentImageNo());
+                }
+            }
+        }
+
+        return commentRequestDto.getProductNo();
     }
 
     /**
@@ -338,6 +353,7 @@ public class ProductService {
      */
     @Transactional
     public Long deleteComment(Long commentNo) {
+        commentRepository.deleteById(commentNo);
 
         return 1L;
     }

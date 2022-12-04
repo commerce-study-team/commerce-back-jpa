@@ -346,4 +346,40 @@ public class ProductServiceTest {
             System.out.println("인기검색어 score : " + response.getScore());
         }
     }
+
+    @Test
+    void 상품평수정() throws Exception {
+        CommentDTO.Request commentRequestDto = new CommentDTO.Request();
+        List<CommentImageDTO.Request> commentImageRequestDtos = new ArrayList<>();
+        commentRequestDto.setCommnetNo(3L);
+        commentRequestDto.setTitle("상품평 수정 남깁니다!");
+        commentRequestDto.setContent("상품 품질 정말 좋네요. 수정할게요");
+        commentRequestDto.setGrade(5);
+        commentRequestDto.setCustNo(1L);
+        commentRequestDto.setProductNo(1L);
+        commentRequestDto.setOrderNo(1L);
+
+        // 이미지 데이터 -- MockObject 생성
+        CommentImageDTO.Request commentImageRequestDto = new CommentImageDTO.Request();
+        commentImageRequestDto.setImageRealName("테스트수정.png");
+        commentImageRequestDto.setCommentImageNo(31L);
+
+        String filePath = "src/test/resources/testImage/test.png";
+        MockMultipartFile multipartFile = new MockMultipartFile("image",
+                "테스트.png", "image/png",
+                new FileInputStream(filePath));
+
+        commentImageRequestDto.setImgFile(multipartFile);
+        commentImageRequestDto.setRemove(true);
+        commentImageRequestDtos.add(commentImageRequestDto);
+        // 이미지 데이터 END
+
+        commentRequestDto.setCommentImageRequestDtoList(commentImageRequestDtos);
+
+        Long productNo = productService.updateComment(commentRequestDto);
+
+        ProductDTO.Response productResponseDTO = productService.findProductByProductNo(1L);
+        assertThat(productResponseDTO.getProductCommentResponseDtoList().size()).isNotZero();
+
+    }
 }
