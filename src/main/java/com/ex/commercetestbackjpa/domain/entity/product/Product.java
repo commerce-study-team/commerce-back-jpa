@@ -77,7 +77,7 @@ public class Product extends BaseEntity {
     private ProductPrice productPrice;
 
     @Builder
-    private Product (String productName, String lgroup, String mgroup, String sgroup, String keyword) {
+    public Product (String productName, String lgroup, String mgroup, String sgroup, String keyword) {
 
         this.productName = productName;
         this.lgroup = lgroup;

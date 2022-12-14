@@ -132,7 +132,7 @@ public class ProductServiceTest {
     void 키워드검색() {
         Map<String, String> filterMap = new HashMap<>();
 
-        filterMap.put("keyword", "인기검색테스트2");
+        filterMap.put("keyword", "테스트입니다");
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "productNo");
 
         List<ProductDTO.Response> list = productService.findProductByFilters(filterMap, pageable);
@@ -385,7 +385,5 @@ public class ProductServiceTest {
     @Test
     void 상품평삭제() {
         productService.deleteComment(5L);
-
-
     }
 }

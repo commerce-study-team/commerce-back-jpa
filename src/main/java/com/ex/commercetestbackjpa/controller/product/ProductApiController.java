@@ -73,4 +73,11 @@ public class ProductApiController {
         return productService.searchRankList(date);
     }
 
+/*    @ApiOperation(value = "리뷰 Like")
+    @PostMapping("/review/like")
+    public Long updateReviewLike(@RequestParam(value = "commentNo") Long commentNo) {
+
+        productService.updateReviewLike(commentNo);
+    }*/
+
 }

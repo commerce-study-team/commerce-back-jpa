@@ -52,7 +52,7 @@ public class ProductDT extends BaseEntity {
     private Product product;
 
     @Builder
-    private ProductDT (String productDtName, String colorCode, String colorName, String sizeCode, String sizeName,
+    public ProductDT (String productDtName, String colorCode, String colorName, String sizeCode, String sizeName,
                       String saleFlag, String image, Product product) {
 
         this.productDtName = productDtName;

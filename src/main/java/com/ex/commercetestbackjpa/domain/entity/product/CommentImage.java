@@ -29,7 +29,7 @@ public class CommentImage extends BaseEntity {
     private Comment comment;
 
     @Builder
-    private CommentImage(String imageName, String imageRealName) {
+    public CommentImage(String imageName, String imageRealName) {
         this.imageName = imageName;
         this.imageRealName = imageRealName;
     }
