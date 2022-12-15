@@ -4,8 +4,17 @@ import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentImageDTO;
 import com.ex.commercetestbackjpa.domain.dto.common.RankDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
+import com.ex.commercetestbackjpa.domain.entity.product.Product;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
+import com.ex.commercetestbackjpa.repository.cache.CacheRepository;
+import com.ex.commercetestbackjpa.repository.product.*;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -21,15 +30,32 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
 
-    @Autowired
+    @InjectMocks
     ProductService productService;
+    @Mock
+    ProductRepository productRepository;
+    @Mock
+    ProductDtRepository productDtRepository;
+    @Mock
+    ProductPriceRepository productPriceRepository;
+    @Mock
+    ProductImageRepository productImageRepository;
+    @Mock
+    CommentRepository commentRepository;
+    @Mock
+    CommentImageRepository commentImageRepository;
+    @Mock
+    CacheRepository redisRepository;
 
     @Test
-    public void 상품저장() throws IOException {
+    public void saveProductTest() throws IOException {
+        // given
         ProductDTO.Request productRequestDto = new ProductDTO.Request();
         List<ProductDtDTO.Request> productDTRequestDtoList = new ArrayList<>();
         List<ProductPriceDTO.Request> productPriceRequestDtoList = new ArrayList<>();
@@ -96,7 +122,17 @@ public class ProductServiceTest {
         productRequestDto.setProductPriceRequestDtoList(productPriceRequestDtoList);
         productRequestDto.setProductImageRequestDtoList(productImageRequestDtoList);
 
-        productService.saveProduct(productRequestDto);
+        // stub
+        when(productRepository.save(any(Product.class))).thenReturn(productRequestDto.toEntity());
+        when(productRepository.findById(any())).thenReturn(Optional.of(productRequestDto.toEntity()));
+        when(productDtRepository.save(any(ProductDT.class))).thenReturn(productDTRequestDto1.toEntity());
+        when(productPriceRepository.save(any(ProductPrice.class))).thenReturn(productPriceRequestDto1.toEntity());
+
+        // when
+        Long productNo = productService.saveProduct(productRequestDto);
+
+        // then
+
     }
 
     @Test

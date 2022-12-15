@@ -1,7 +1,6 @@
 package com.ex.commercetestbackjpa.productTest.repository;
 
 import com.ex.commercetestbackjpa.domain.entity.product.*;
-import com.ex.commercetestbackjpa.repository.cache.CacheRepository;
 import com.ex.commercetestbackjpa.repository.product.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -102,6 +101,7 @@ public class ProductRepositoryTest {
 
     @Test
     void saveProductTest() {
+        // given
         Product product = Product.builder()
                 .productName("테스트상품등록")
                 .lgroup("10")
@@ -110,24 +110,30 @@ public class ProductRepositoryTest {
                 .keyword("테스트키워드")
                 .build();
 
+        // when
         Product productCT = productRepository.save(product);
 
+        // then
         assertThat(product.getProductNo()).isEqualTo(productCT.getProductNo());
     }
 
     @Test
     void findByFilterTest() {
+        // given
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "productNo");
         Map<String, String> filterMap = new HashMap<>();
         filterMap.put("keyword", "테스트키워드");
 
+        // when
         Page<Product> productList = productRepository.findByFilters(filterMap, pageable);
 
+        // then
         assertThat("테스트키워드").isEqualTo(productList.getContent().get(0).getKeyword());
     }
 
     @Test
     void saveProductDtTest() {
+        // given
         Product product = Product.builder()
                 .productName("테스트상품등록")
                 .lgroup("10")
@@ -146,20 +152,27 @@ public class ProductRepositoryTest {
                 .product(product)
                 .build();
 
+        // when
         ProductDT productDTCT = productDtRepository.save(productDT);
 
+        // then
         assertThat(productDT.getProductDtNo()).isEqualTo(productDTCT.getProductDtNo());
     }
 
     @Test
     void findProductDtListTest() {
+        // given
+
+        // when
         List<ProductDT> productDTList = productDtRepository.findAll();
 
+        // then
         assertThat("0").isEqualTo(productDTList.get(0).getSaleFlag());
     }
 
     @Test
     void saveProductPriceTest() {
+        // given
         Product product = Product.builder()
                 .productName("테스트상품등록")
                 .lgroup("10")
@@ -175,13 +188,16 @@ public class ProductRepositoryTest {
                 .product(product)
                 .build();
 
+        // when
         ProductPrice productPriceCT = productPriceRepository.save(productPrice);
 
+        // then
         assertThat(productPrice.getProductPriceNo()).isEqualTo(productPriceCT.getProductPriceNo());
     }
 
     @Test
     void saveProductImageTest() {
+        // given
         Product product = Product.builder()
                 .productName("테스트상품등록")
                 .lgroup("10")
@@ -199,20 +215,27 @@ public class ProductRepositoryTest {
                 .build();
         productImage.settingProduct(product);
 
+        // when
         ProductImage productImageCT = productImageRepository.save(productImage);
 
+        // then
         assertThat(productImage.getImageRealName()).isEqualTo(productImageCT.getImageRealName());
     }
 
     @Test
     void findProductImageListTest() {
+        // given
+
+        // when
         List<ProductImage> productImageList = productImageRepository.findAll();
 
+        // then
         assertThat("테스트.png").isEqualTo(productImageList.get(0).getImageRealName());
     }
 
     @Test
     void saveCommentTest() {
+        // given
         Product product = Product.builder()
                 .productName("테스트상품등록")
                 .lgroup("10")
@@ -231,20 +254,27 @@ public class ProductRepositoryTest {
 
         comment.settingProduct(product);
 
+        // when
         Comment commentCT = commentRepository.save(comment);
 
+        // then
         assertThat(comment.getTitle()).isEqualTo(commentCT.getTitle());
     }
 
     @Test
     void findCommentList() {
+        // given
+
+        // when
         List<Comment> commentList = commentRepository.findAll();
 
+        // then
         assertThat("상품평 남깁니다!").isEqualTo(commentList.get(0).getTitle());
     }
 
     @Test
     void saveCommentImageTest() {
+        // given
         Product product = Product.builder()
                 .productName("테스트상품등록")
                 .lgroup("10")
@@ -271,15 +301,21 @@ public class ProductRepositoryTest {
 
         commentImage.addComment(comment);
 
+        // when
         CommentImage commentImageCT = commentImageRepository.save(commentImage);
 
+        // then
         assertThat(commentImage.getImageRealName()).isEqualTo(commentImageCT.getImageRealName());
     }
 
     @Test
     void findCommentImage() {
+        // given
+
+        // when
         List<CommentImage> commentImageList = commentImageRepository.findAll();
 
+        // then
         assertThat("테스트.png").isEqualTo(commentImageList.get(0).getImageRealName());
     }
 }
