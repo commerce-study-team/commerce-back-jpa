@@ -4,8 +4,17 @@ import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
 import com.ex.commercetestbackjpa.domain.dto.comment.CommentImageDTO;
 import com.ex.commercetestbackjpa.domain.dto.common.RankDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
+import com.ex.commercetestbackjpa.domain.entity.product.Product;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
+import com.ex.commercetestbackjpa.repository.cache.CacheRepository;
+import com.ex.commercetestbackjpa.repository.product.*;
 import com.ex.commercetestbackjpa.service.product.ProductService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -21,15 +30,32 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
 
-    @Autowired
+    @InjectMocks
     ProductService productService;
+    @Mock
+    ProductRepository productRepository;
+    @Mock
+    ProductDtRepository productDtRepository;
+    @Mock
+    ProductPriceRepository productPriceRepository;
+    @Mock
+    ProductImageRepository productImageRepository;
+    @Mock
+    CommentRepository commentRepository;
+    @Mock
+    CommentImageRepository commentImageRepository;
+    @Mock
+    CacheRepository redisRepository;
 
     @Test
-    public void 상품저장() throws IOException {
+    public void saveProductTest() throws IOException {
+        // given
         ProductDTO.Request productRequestDto = new ProductDTO.Request();
         List<ProductDtDTO.Request> productDTRequestDtoList = new ArrayList<>();
         List<ProductPriceDTO.Request> productPriceRequestDtoList = new ArrayList<>();
@@ -96,7 +122,17 @@ public class ProductServiceTest {
         productRequestDto.setProductPriceRequestDtoList(productPriceRequestDtoList);
         productRequestDto.setProductImageRequestDtoList(productImageRequestDtoList);
 
-        productService.saveProduct(productRequestDto);
+        // stub
+        when(productRepository.save(any(Product.class))).thenReturn(productRequestDto.toEntity());
+        when(productRepository.findById(any())).thenReturn(Optional.of(productRequestDto.toEntity()));
+        when(productDtRepository.save(any(ProductDT.class))).thenReturn(productDTRequestDto1.toEntity());
+        when(productPriceRepository.save(any(ProductPrice.class))).thenReturn(productPriceRequestDto1.toEntity());
+
+        // when
+        Long productNo = productService.saveProduct(productRequestDto);
+
+        // then
+
     }
 
     @Test
@@ -132,7 +168,7 @@ public class ProductServiceTest {
     void 키워드검색() {
         Map<String, String> filterMap = new HashMap<>();
 
-        filterMap.put("keyword", "인기검색테스트2");
+        filterMap.put("keyword", "테스트입니다");
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "productNo");
 
         List<ProductDTO.Response> list = productService.findProductByFilters(filterMap, pageable);
@@ -339,11 +375,51 @@ public class ProductServiceTest {
 
     @Test
     void 인기검색어조회() {
-        List<RankDTO.Response> responses = productService.searchRankList(LocalDate.now().minusDays(1));
+        List<RankDTO.Response> responses = productService.searchRankList(LocalDate.now());
 
         for(RankDTO.Response response : responses) {
             System.out.println("인기검색어 : " + response.getItemId());
             System.out.println("인기검색어 score : " + response.getScore());
         }
+    }
+
+    @Test
+    void 상품평수정() throws Exception {
+        CommentDTO.Request commentRequestDto = new CommentDTO.Request();
+        List<CommentImageDTO.Request> commentImageRequestDtos = new ArrayList<>();
+        commentRequestDto.setCommnetNo(3L);
+        commentRequestDto.setTitle("상품평 수정 남깁니다!");
+        commentRequestDto.setContent("상품 품질 정말 좋네요. 수정할게요");
+        commentRequestDto.setGrade(5);
+        commentRequestDto.setCustNo(1L);
+        commentRequestDto.setProductNo(1L);
+        commentRequestDto.setOrderNo(1L);
+
+        // 이미지 데이터 -- MockObject 생성
+        CommentImageDTO.Request commentImageRequestDto = new CommentImageDTO.Request();
+        commentImageRequestDto.setImageRealName("테스트수정.png");
+
+        String filePath = "src/test/resources/testImage/test.png";
+        MockMultipartFile multipartFile = new MockMultipartFile("image",
+                "테스트.png", "image/png",
+                new FileInputStream(filePath));
+
+        commentImageRequestDto.setImgFile(multipartFile);
+        commentImageRequestDto.setRemove(false);
+        commentImageRequestDtos.add(commentImageRequestDto);
+        // 이미지 데이터 END
+
+        commentRequestDto.setCommentImageRequestDtoList(commentImageRequestDtos);
+
+        Long productNo = productService.updateComment(commentRequestDto);
+
+        ProductDTO.Response productResponseDTO = productService.findProductByProductNo(1L);
+        assertThat(productResponseDTO.getProductCommentResponseDtoList().size()).isNotZero();
+
+    }
+
+    @Test
+    void 상품평삭제() {
+        productService.deleteComment(5L);
     }
 }

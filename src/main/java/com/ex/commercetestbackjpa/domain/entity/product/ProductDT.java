@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import java.util.Optional;
 @Getter
 @NoArgsConstructor
 @DynamicInsert
+@DynamicUpdate
 public class ProductDT extends BaseEntity {
 
     @Id
@@ -50,7 +52,7 @@ public class ProductDT extends BaseEntity {
     private Product product;
 
     @Builder
-    private ProductDT (String productDtName, String colorCode, String colorName, String sizeCode, String sizeName,
+    public ProductDT (String productDtName, String colorCode, String colorName, String sizeCode, String sizeName,
                       String saleFlag, String image, Product product) {
 
         this.productDtName = productDtName;

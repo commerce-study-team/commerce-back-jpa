@@ -1,21 +1,25 @@
 package com.ex.commercetestbackjpa.domain.entity.product;
 
 import com.ex.commercetestbackjpa.domain.base.BaseEntity;
+import com.ex.commercetestbackjpa.domain.dto.comment.CommentDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "tcomment")
 @Getter
 @NoArgsConstructor
 @DynamicInsert
+@DynamicUpdate
 public class Comment extends BaseEntity {
 
     @Id
@@ -77,5 +81,18 @@ public class Comment extends BaseEntity {
     public void addCommentImage(CommentImage commentImage) {
         this.getCommentImageList().add(commentImage);
         commentImage.addComment(this);
+    }
+
+    public void updateCommentOptions(CommentDTO.Request commentRequestDto) {
+        Optional.ofNullable(commentRequestDto.getTitle()).ifPresent(t -> this.updateCommentTitle(t));
+        Optional.ofNullable(commentRequestDto.getContent()).ifPresent(c -> this.updateCommentContent(c));
+    }
+
+    public void updateCommentTitle(String title) {
+        this.title = title;
+    }
+
+    public void updateCommentContent(String content) {
+        this.content = content;
     }
 }

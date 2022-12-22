@@ -33,7 +33,7 @@ public class ProductImage extends BaseEntity {
     private Product product;
 
     @Builder
-    private ProductImage(String imageName, String imageRealName) {
+    public ProductImage(String imageName, String imageRealName) {
 
         this.imageName = imageName;
         this.imageRealName = imageRealName;

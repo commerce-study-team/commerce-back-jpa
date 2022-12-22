@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @DynamicInsert
+@DynamicUpdate
 public class ProductPrice extends BaseEntity {
 
     @Id
@@ -43,7 +45,7 @@ public class ProductPrice extends BaseEntity {
     private Product product;
 
     @Builder
-    private ProductPrice(LocalDateTime applyDate, Long salePrice, Long costPrice, Product product) {
+    public ProductPrice(LocalDateTime applyDate, Long salePrice, Long costPrice, Product product) {
 
         this.applyDate = applyDate;
         this.salePrice = salePrice;

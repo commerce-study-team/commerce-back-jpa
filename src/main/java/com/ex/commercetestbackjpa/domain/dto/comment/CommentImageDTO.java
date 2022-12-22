@@ -21,6 +21,8 @@ public class CommentImageDTO {
 
         private MultipartFile imgFile;
 
+        private Boolean remove;
+
         public CommentImage toEntity() {
             return CommentImage.builder()
                     .imageRealName(this.imageRealName)
