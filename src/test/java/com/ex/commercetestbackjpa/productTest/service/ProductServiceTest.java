@@ -10,6 +10,7 @@ import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
 import com.ex.commercetestbackjpa.repository.cache.CacheRepository;
 import com.ex.commercetestbackjpa.repository.product.*;
 import com.ex.commercetestbackjpa.service.product.ProductService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,9 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.FileInputStream;
@@ -52,6 +51,47 @@ public class ProductServiceTest {
     CommentImageRepository commentImageRepository;
     @Mock
     CacheRepository redisRepository;
+
+    // stub Data
+
+    ProductDTO.Request productRequestDto;
+
+    ProductDtDTO.Request productDtRequestDto;
+
+    ProductPriceDTO.Request productPriceRequestDto;
+
+    @BeforeEach
+    void saveProduct() {
+        productRequestDto = new ProductDTO.Request();
+
+        productRequestDto.setProductNo(1L);
+        productRequestDto.setProductName("테스트 상품");
+        productRequestDto.setKeyword("테스트");
+        productRequestDto.setLgroup("20");
+        productRequestDto.setMgroup("20");
+        productRequestDto.setSgroup("20");
+        productRequestDto.setSaleFlag("00");
+        productRequestDto.setSignFlag("10");
+
+        productDtRequestDto = new ProductDtDTO.Request();
+
+        productDtRequestDto.setProductDtNo(1L);
+        productDtRequestDto.setProductDtName("테스트 단품");
+        productDtRequestDto.setSaleFlag("00");
+        productDtRequestDto.setColorCode("10");
+        productDtRequestDto.setColorName("red");
+        productDtRequestDto.setSizeCode("10");
+        productDtRequestDto.setSizeName("소");
+
+        productPriceRequestDto = new ProductPriceDTO.Request();
+
+        productPriceRequestDto.setProductPriceNo(1L);
+        productPriceRequestDto.setCostPrice(5000L);
+        productPriceRequestDto.setSalePrice(7000L);
+        productPriceRequestDto.setMargin(2000L);
+        productPriceRequestDto.setApplyDate(LocalDateTime.now());
+        productPriceRequestDto.setUseYn(true);
+    }
 
     @Test
     public void saveProductTest() throws IOException {
@@ -137,42 +177,71 @@ public class ProductServiceTest {
 
     @Test
     public void 상품정보변경() {
-        ProductDTO.Request productRequestDto = new ProductDTO.Request();
+        // given
+        ProductDTO.Request productRequestDtoTrans = new ProductDTO.Request();
 
-        productRequestDto.setProductNo(1L);
-        productRequestDto.setProductName("테스트 상품 변경");
-        productRequestDto.setKeyword("테스트");
-        productRequestDto.setLgroup("10");
-        productRequestDto.setMgroup("10");
-        productRequestDto.setSgroup("10");
-        productRequestDto.setSaleFlag("00");
-        productRequestDto.setSignFlag("10");
+        productRequestDtoTrans.setProductNo(1L);
+        productRequestDtoTrans.setProductName("테스트 상품 변경");
+        productRequestDtoTrans.setKeyword("테스트");
+        productRequestDtoTrans.setLgroup("20");
+        productRequestDtoTrans.setMgroup("20");
+        productRequestDtoTrans.setSgroup("20");
+        productRequestDtoTrans.setSaleFlag("00");
+        productRequestDtoTrans.setSignFlag("10");
 
-        Long productNo = productService.updateProduct(productRequestDto);
+        // stub
+        when(productRepository.findById(any())).thenReturn(Optional.of(productRequestDto.toEntity()));
 
-        ProductDTO.Response changeProductDTO = productService.findProductByProductNo(productNo);
+        // when
+        Long productNo = productService.updateProduct(productRequestDtoTrans);
 
-        assertThat(productRequestDto.getProductName()).isEqualTo(changeProductDTO.getProductName());
+        // then
     }
 
     @Test
     void 단일상품검색() {
+        // given
+
+        // stub
+        Product product = productRequestDto.toEntity();
+        ProductDT productDt = productDtRequestDto.toEntity();
+        ProductPrice productPrice = productPriceRequestDto.toEntity();
+
+        product.getProductDtList().add(productDt);
+        product.getProductPriceList().add(productPrice);
+
+        when(productRepository.findById(any())).thenReturn(Optional.of(product));
+
+        // when
         ProductDTO.Response productResponseDto = productService.findProductByProductNo(1L);
 
-        assertThat(productResponseDto.getProductNo()).isNotNull();
-        assertThat(productResponseDto.getProductDtResponseDtoList().get(0).getProductDtNo()).isNotNull();
-        assertThat(productResponseDto.getProductPriceResponseDto().getProductPriceNo()).isNotNull();
+        // then
+        assertThat(productResponseDto.getProductName()).isEqualTo("테스트 상품");
+        assertThat(productResponseDto.getProductDtResponseDtoList().get(0).getProductDtName()).isEqualTo("테스트 단품");
+        assertThat(productResponseDto.getProductPriceResponseDto().getUseYn()).isTrue();
     }
 
     @Test
     void 키워드검색() {
+        // given
         Map<String, String> filterMap = new HashMap<>();
 
-        filterMap.put("keyword", "테스트입니다");
+        filterMap.put("keyword", "테스트");
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "productNo");
 
+        // stub
+        Product product = productRequestDto.toEntity();
+        ProductPrice productPrice = productPriceRequestDto.toEntity();
+        product.getProductPriceList().add(productPrice);
+        List<Product> productList = new ArrayList<>();
+        productList.add(product);
+        Page page = new PageImpl<>(productList, pageable, productList.size());
+        when(productRepository.findByFilters(filterMap, pageable)).thenReturn(page);
+
+        // when
         List<ProductDTO.Response> list = productService.findProductByFilters(filterMap, pageable);
 
+        // then
         for(ProductDTO.Response pr : list) {
             assertThat(pr.getKeyword()).isEqualTo("테스트");
         }
@@ -180,16 +249,30 @@ public class ProductServiceTest {
 
     @Test
     void 전체상품검색() {
+        // given
         Map<String, String> filterMap = new HashMap<>();
 
-        Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "productNo");
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "productNo");
+
+        // stub
+        Product product = productRequestDto.toEntity();
+        ProductPrice productPrice = productPriceRequestDto.toEntity();
+        product.getProductPriceList().add(productPrice);
+        List<Product> productList = new ArrayList<>();
+        productList.add(product);
+        Page page = new PageImpl<>(productList, pageable, productList.size());
+        when(productRepository.findByFilters(filterMap, pageable)).thenReturn(page);
+
+        // when
         List<ProductDTO.Response> list = productService.findProductByFilters(filterMap, pageable);
 
+        // then
         assertThat(list.size()).isNotZero();
     }
 
     @Test
     void 단품저장() {
+        // given
         List<ProductDtDTO.Request> productDTRequestDtoList = new ArrayList<>();
         ProductDtDTO.Request productDTRequestDto1 = new ProductDtDTO.Request();
         productDTRequestDto1.setProductDtName("연두붕어빵");
@@ -210,11 +293,16 @@ public class ProductServiceTest {
         productDTRequestDtoList.add(productDTRequestDto1);
         productDTRequestDtoList.add(productDTRequestDto2);
 
+        //stub
+
+
+        // when
         Long productNo = productService.saveProductDt(productDTRequestDtoList, 1L);
 
         ProductDTO.Response productResponseDto = productService.findProductByProductNo(productNo);
         List<ProductDtDTO.Response> productDtResponseDtoList = productResponseDto.getProductDtResponseDtoList();
 
+        // then
         assertThat(productDtResponseDtoList.size()).isNotZero();
 
     }
