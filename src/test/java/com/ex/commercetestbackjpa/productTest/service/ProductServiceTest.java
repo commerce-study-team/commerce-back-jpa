@@ -6,6 +6,7 @@ import com.ex.commercetestbackjpa.domain.dto.common.RankDTO;
 import com.ex.commercetestbackjpa.domain.dto.product.*;
 import com.ex.commercetestbackjpa.domain.entity.product.Product;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductDT;
+import com.ex.commercetestbackjpa.domain.entity.product.ProductImage;
 import com.ex.commercetestbackjpa.domain.entity.product.ProductPrice;
 import com.ex.commercetestbackjpa.repository.cache.CacheRepository;
 import com.ex.commercetestbackjpa.repository.product.*;
@@ -60,8 +61,10 @@ public class ProductServiceTest {
 
     ProductPriceDTO.Request productPriceRequestDto;
 
+    ProductImageDTO.Request productImageRequestDto;
+
     @BeforeEach
-    void saveProduct() {
+    void saveProduct() throws Exception {
         productRequestDto = new ProductDTO.Request();
 
         productRequestDto.setProductNo(1L);
@@ -91,6 +94,18 @@ public class ProductServiceTest {
         productPriceRequestDto.setMargin(2000L);
         productPriceRequestDto.setApplyDate(LocalDateTime.now());
         productPriceRequestDto.setUseYn(true);
+
+        // 이미지 데이터 -- MockObject 생성
+        productImageRequestDto = new ProductImageDTO.Request();
+        productImageRequestDto.setProductImageNo(1L);
+        productImageRequestDto.setImageRealName("테스트.png");
+
+        String filePath = "src/test/resources/testImage/test.png";
+        MockMultipartFile multipartFile = new MockMultipartFile("image",
+                "테스트.png", "image/png",
+                new FileInputStream(filePath));
+
+        productImageRequestDto.setImgFile(multipartFile);
     }
 
     @Test
@@ -294,6 +309,13 @@ public class ProductServiceTest {
         productDTRequestDtoList.add(productDTRequestDto2);
 
         //stub
+        Product product = productRequestDto.toEntity();
+        ProductDT productDt = productDtRequestDto.toEntity();
+        ProductPrice productPrice = productPriceRequestDto.toEntity();
+
+        product.getProductDtList().add(productDt);
+        product.getProductPriceList().add(productPrice);
+        when(productRepository.findById(any())).thenReturn(Optional.of(product));
 
 
         // when
@@ -309,6 +331,7 @@ public class ProductServiceTest {
 
     @Test
     void 단품저장실패() {
+        // given
         List<ProductDtDTO.Request> productDTRequestDtoList = new ArrayList<>();
         ProductDtDTO.Request productDTRequestDto1 = new ProductDtDTO.Request();
         productDTRequestDto1.setProductDtName("초록붕어빵");
@@ -319,12 +342,14 @@ public class ProductServiceTest {
         productDTRequestDtoList.add(productDTRequestDto1);
         productDTRequestDtoList.add(productDTRequestDto2);
 
+        // when then
         assertThrows(NoSuchElementException.class, () -> productService.saveProductDt(productDTRequestDtoList, 1000L));
 
     }
 
     @Test
     void 단품변경() {
+        // given
         List<ProductDtDTO.Request> list = new ArrayList<>();
         ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
         productDTRequestDto.setProductDtNo(1L);
@@ -335,8 +360,14 @@ public class ProductServiceTest {
 
         list.add(productDTRequestDto);
 
+        // stub
+        ProductDT productDt = productDtRequestDto.toEntity();
+        when(productDtRepository.findById(any())).thenReturn(Optional.of(productDt));
+
+        // when
         Long productNo = productService.updateProductDt(list, 1L);
 
+        // then
         ProductDtDTO.Response productDtResponseDto = productService.findProductDtByProductDtNo(productNo);
 
         assertThat(productDTRequestDto.getColorCode()).isEqualTo(productDtResponseDto.getColorCode());
@@ -345,6 +376,7 @@ public class ProductServiceTest {
 
     @Test
     void 단품변경실패() {
+        // given
         List<ProductDtDTO.Request> list = new ArrayList<>();
         ProductDtDTO.Request productDTRequestDto = new ProductDtDTO.Request();
         productDTRequestDto.setProductDtNo(0L);
@@ -355,11 +387,17 @@ public class ProductServiceTest {
 
         list.add(productDTRequestDto);
 
+        // stub
+        ProductDT productDt = productDtRequestDto.toEntity();
+        when(productDtRepository.findById(any())).thenReturn(Optional.of(productDt));
+
+        // when then
         assertThrows(NoSuchElementException.class, () -> productService.updateProductDt(list, 1L));
     }
 
     @Test
     void 상품가격사용여부변경() {
+        // given
         List<ProductPriceDTO.Request> list = new ArrayList<>();
         ProductPriceDTO.Request productPriceRequestDTO = new ProductPriceDTO.Request();
         productPriceRequestDTO.setProductPriceNo(1L);
@@ -368,17 +406,26 @@ public class ProductServiceTest {
         productPriceRequestDTO.setUseYn(true);
         list.add(productPriceRequestDTO);
 
+        // stub
+        ProductPrice productPrice = productPriceRequestDto.toEntity();
+        when(productPriceRepository.findById(any())).thenReturn(Optional.of(productPrice));
+
+        // when
         Long productNo = productService.updateProductPrice(list, 1L);
 
-        ProductDTO.Response productDTO= productService.findProductByProductNo(productNo);
+        // then
+        ProductPriceDTO.Response productPriceDTO = new ProductPriceDTO.Response(productPriceRepository.findById(1L).get());
 
-        assertThat(productDTO.getProductPriceResponseDto().getUseYn()).isEqualTo(true);
+        assertThat(productPriceDTO.getUseYn()).isEqualTo(true);
+        assertThat(productPriceDTO.getCostPrice()).isEqualTo(2000L);
+        assertThat(productPriceDTO.getSalePrice()).isEqualTo(10000L);
     }
 
     @Test
     void 가격저장() {
+        // given
         List<ProductPriceDTO.Request> productPriceRequestDtoList = new ArrayList<>();
-        // 가격 데이터
+
         ProductPriceDTO.Request productPriceRequestDto1 = new ProductPriceDTO.Request();
         productPriceRequestDto1.setApplyDate(LocalDateTime.parse("2022-11-07T11:20:10"));
         productPriceRequestDto1.setSalePrice(5000L);
@@ -390,13 +437,23 @@ public class ProductServiceTest {
         productPriceRequestDto2.setSalePrice(6000L);
         productPriceRequestDto2.setCostPrice(2000L);
         productPriceRequestDto2.setMargin(productPriceRequestDto2.getSalePrice() - productPriceRequestDto2.getCostPrice());
-        // 가격 데이터 END
 
         productPriceRequestDtoList.add(productPriceRequestDto1);
         productPriceRequestDtoList.add(productPriceRequestDto2);
 
+        // stub
+        Product product = productRequestDto.toEntity();
+        ProductDT productDt = productDtRequestDto.toEntity();
+        ProductPrice productPrice = productPriceRequestDto.toEntity();
+
+        product.getProductDtList().add(productDt);
+        product.getProductPriceList().add(productPrice);
+        when(productRepository.findById(any())).thenReturn(Optional.of(product));
+
+        // when
         Long productNo = productService.saveProductPrice(productPriceRequestDtoList, 1L);
 
+        // then
         ProductDTO.Response productResponseDto = productService.findProductByProductNo(productNo);
         ProductPriceDTO.Response productPriceResponseDto = productResponseDto.getProductPriceResponseDto();
 
@@ -405,6 +462,7 @@ public class ProductServiceTest {
 
     @Test
     void 상품이미지저장() throws Exception {
+        // given
         List<ProductImageDTO.Request> productImageRequestDtoList = new ArrayList<>();
         // 이미지 데이터 -- MockObject 생성
         ProductImageDTO.Request productImageRequestDto = new ProductImageDTO.Request();
@@ -417,24 +475,53 @@ public class ProductServiceTest {
 
         productImageRequestDto.setImgFile(multipartFile);
         productImageRequestDtoList.add(productImageRequestDto);
-        // 이미지 데이터 END
 
-        Long productNo = productService.saveProductImage(productImageRequestDtoList, 2L);
+        // stub
+        Product product = productRequestDto.toEntity();
+        ProductDT productDt = productDtRequestDto.toEntity();
+        ProductPrice productPrice = productPriceRequestDto.toEntity();
 
-        assertThat(productService.findProductByProductNo(productNo).getProductImageResponseDtoList().size()).isNotZero();
+        product.getProductDtList().add(productDt);
+        product.getProductPriceList().add(productPrice);
+        when(productRepository.findById(any())).thenReturn(Optional.of(product));
+
+        // when
+        Long productNo = productService.saveProductImage(productImageRequestDtoList, 1L);
+
+        // then
+        ProductDTO.Response productDto = productService.findProductByProductNo(productNo);
+        assertThat(productDto.getProductImageResponseDtoList().size()).isNotZero();
     }
 
     @Test
     void 상품이미지제거() {
-        Long productNo = productService.deleteProductImage(2L);
+        // given
+        long productDelImegeNo = 1L;
+
+        // stub
+        ProductImage productImage = productImageRequestDto.toEntity();
+        Product product = productRequestDto.toEntity();
+        ProductPrice productPrice = productPriceRequestDto.toEntity();
+        product.getProductPriceList().add(productPrice);
+        product.getProductImageList().add(productImage);
+        productImage.settingProduct(product);
+        when(productImageRepository.findById(any())).thenReturn(Optional.of(productImage));
+        when(productRepository.findById(any())).thenReturn(Optional.of(product));
+
+        // when
+        Long productNo = productService.deleteProductImage(productDelImegeNo);
+
+        // then
+        ProductDTO.Response productDto = productService.findProductByProductNo(productNo);
+        assertThat(productDto.getProductImageResponseDtoList().size()).isZero();
     }
 
     @Test
     void 상품평저장() throws Exception {
         CommentDTO.Request commentRequestDto = new CommentDTO.Request();
         List<CommentImageDTO.Request> commentImageRequestDtos = new ArrayList<>();
-        commentRequestDto.setTitle("상품평 남깁니다!");
-        commentRequestDto.setContent("상품 품질 정말 좋네요");
+        commentRequestDto.setTitle("상품평 테스트 제목");
+        commentRequestDto.setContent("상품평 테스트 내용");
         commentRequestDto.setGrade(5);
         commentRequestDto.setCustNo(1L);
         commentRequestDto.setProductNo(1L);
