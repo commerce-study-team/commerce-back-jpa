@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -43,7 +44,7 @@ public class ProductRepositoryTest {
     private CommentImageRepository commentImageRepository;
 
     @BeforeEach
-    void saveProduct() {
+    void baseProduct() {
         Product product = Product.builder()
                 .productName("테스트상품등록")
                 .lgroup("10")

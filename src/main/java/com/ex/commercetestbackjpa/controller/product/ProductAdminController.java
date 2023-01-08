@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,14 +29,16 @@ public class ProductAdminController {
     private final ProductService productService;
     @ApiOperation(value = "상품 저장 (admin)")
     @PostMapping("")
-    public Long saveProduct (@RequestBody @Valid ProductDTO.Request productRequestDto) {
-        return productService.saveProduct(productRequestDto);
+    public ResponseEntity<Long> saveProduct (@RequestBody @Valid ProductDTO.Request productRequestDto) {
+        long resProductNo = productService.saveProduct(productRequestDto);
+        return ResponseEntity.ok().body(resProductNo);
     }
 
     @ApiOperation(value = "상품 정보 변경 (admin)")
     @PatchMapping("")
-    public Long updateProduct (@RequestBody @Valid ProductDTO.Request productRequestDto) {
-        return productService.updateProduct(productRequestDto);
+    public ResponseEntity<Long> updateProduct (@RequestBody @Valid ProductDTO.Request productRequestDto) {
+        long resProductNo = productService.updateProduct(productRequestDto);
+        return ResponseEntity.ok().body(resProductNo);
     }
 
     @ApiOperation(value = "상품 List 조회 (admin)")
@@ -49,47 +52,51 @@ public class ProductAdminController {
             @ApiImplicitParam(name = "signFlag", dataType = "String", value = "승인단계")
     })
     @GetMapping("")
-    public List<ProductDTO.Response> findProductByFilters (@RequestParam(required = false) Map<String, String> filterMap,
+    public ResponseEntity<List<ProductDTO.Response>> findProductByFilters (@RequestParam(required = false) Map<String, String> filterMap,
                                                      @PageableDefault(size=10, sort="productNo", direction = Sort.Direction.DESC) Pageable pageable) {
-
-        return productService.findProductForManage(filterMap, pageable);
+        List<ProductDTO.Response> list = productService.findProductForManage(filterMap, pageable);
+        return ResponseEntity.ok().body(list);
     }
 
     @ApiOperation(value = "단품 저장 (admin)")
     @PostMapping("/{productNo}/dt")
-    public Long saveProductDt(@RequestBody @Valid List<ProductDtDTO.Request> productDTRequestDtoList, @PathVariable Long productNo) {
-        return productService.saveProductDt(productDTRequestDtoList, productNo);
+    public ResponseEntity<Long> saveProductDt(@RequestBody @Valid List<ProductDtDTO.Request> productDTRequestDtoList, @PathVariable Long productNo) {
+        long resProductNo = productService.saveProductDt(productDTRequestDtoList, productNo);
+        return ResponseEntity.ok().body(resProductNo);
     }
 
     @ApiOperation(value = "단품 변경 (admin)")
     @PatchMapping("/{productNo}/dt")
-    public Long updateProductDtColor(@RequestBody @Valid List<ProductDtDTO.Request> productDTRequestDtoList, @PathVariable Long productNo) {
-        return productService.updateProductDt(productDTRequestDtoList, productNo);
+    public ResponseEntity<Long> updateProductDtColor(@RequestBody @Valid List<ProductDtDTO.Request> productDTRequestDtoList, @PathVariable Long productNo) {
+        long resProductNo = productService.updateProductDt(productDTRequestDtoList, productNo);
+        return ResponseEntity.ok().body(resProductNo);
     }
 
     @ApiOperation(value = "가격 저장 (admin)")
     @PostMapping("/{productNo}/price")
-    public Long saveProductPrice(@RequestBody @Valid List<ProductPriceDTO.Request> productPriceRequestDtoList, @PathVariable Long productNo) {
-        return productService.saveProductPrice(productPriceRequestDtoList, productNo);
+    public ResponseEntity<Long> saveProductPrice(@RequestBody @Valid List<ProductPriceDTO.Request> productPriceRequestDtoList, @PathVariable Long productNo) {
+        long resProductNo = productService.saveProductPrice(productPriceRequestDtoList, productNo);
+        return ResponseEntity.ok().body(resProductNo);
     }
 
     @ApiOperation(value = "가격 변경 (admin)")
     @PatchMapping("/{productNo}/price")
-    public Long updateProductPrice(@RequestBody @Valid List<ProductPriceDTO.Request> productPriceRequestDtoList, @PathVariable Long productNo) {
-        return productService.updateProductPrice(productPriceRequestDtoList, productNo);
+    public ResponseEntity<Long> updateProductPrice(@RequestBody @Valid List<ProductPriceDTO.Request> productPriceRequestDtoList, @PathVariable Long productNo) {
+        long resProductNo = productService.updateProductPrice(productPriceRequestDtoList, productNo);
+        return ResponseEntity.ok().body(resProductNo);
     }
 
     @ApiOperation(value = "상품 이미지 추가 (admin)")
     @PostMapping("/{productNo}/image")
-    public Long uploadProductImage(@RequestBody @Valid List<ProductImageDTO.Request> productImageRequestDtoList, @PathVariable Long productNo) {
-
-        return productService.saveProductImage(productImageRequestDtoList, productNo);
+    public ResponseEntity<Long> uploadProductImage(@RequestBody @Valid List<ProductImageDTO.Request> productImageRequestDtoList, @PathVariable Long productNo) {
+        long resProductNo = productService.saveProductImage(productImageRequestDtoList, productNo);
+        return ResponseEntity.ok().body(resProductNo);
     }
 
     @ApiOperation(value = "상품 이미지 삭제 (admin)")
     @DeleteMapping("/{productImageNo}/image")
-    public Long deleteProductImage(@PathVariable Long productImageNo) {
-
-        return productService.deleteProductImage(productImageNo);
+    public ResponseEntity<Long> deleteProductImage(@PathVariable Long productImageNo) {
+        long resProductNo = productService.deleteProductImage(productImageNo);
+        return ResponseEntity.ok().body(resProductNo);
     }
 }
