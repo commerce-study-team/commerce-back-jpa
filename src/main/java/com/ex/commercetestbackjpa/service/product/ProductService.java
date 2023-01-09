@@ -67,7 +67,6 @@ public class ProductService {
         // 이미지는 필수가 아니기 때문에 데이터 있을 때 저장
         productImageRequestDtoList.ifPresent(n -> this.saveProductImage(n, productNo));
 
-
         return productNo;
     }
 
@@ -105,7 +104,7 @@ public class ProductService {
         Page<Product> productList = productRepository.findByFilters(filterMap, pageable);
 
         // Redis를 통하여 상품평 Rank 관리
-        if (!filterMap.get("keyword").isEmpty()) {
+        if (filterMap.get("keyword") != null) {
             redisRepository.sortSetAdd("searchRank", filterMap.get("keyword"), 1L);
         }
 

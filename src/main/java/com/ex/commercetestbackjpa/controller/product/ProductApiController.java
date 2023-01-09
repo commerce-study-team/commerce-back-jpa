@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.web.PageableDefault;
 
@@ -36,41 +37,46 @@ public class ProductApiController {
             @ApiImplicitParam(name = "sgroup", dataType = "String", value = "소분류")
     })
     @GetMapping("")
-    public List<ProductDTO.Response> findProductByFilters (@RequestParam(required = false) Map<String, String> filterMap,
+    public ResponseEntity<List<ProductDTO.Response>> findProductByFilters (@RequestParam(required = false) Map<String, String> filterMap,
                                                      @PageableDefault(size=10, sort="productNo", direction = Sort.Direction.DESC) Pageable pageable) {
+        List<ProductDTO.Response> list = productService.findProductByFilters(filterMap, pageable);
 
-        return productService.findProductByFilters(filterMap, pageable);
+        return ResponseEntity.ok().body(list);
     }
 
     @ApiOperation(value = "상세 상품 조회 (front)")
     @GetMapping("/{productNo}")
-    public ProductDTO.Response findProductByProductNo (@PathVariable Long productNo) {
-
-        return productService.findProductByProductNo(productNo);
+    public ResponseEntity<ProductDTO.Response> findProductByProductNo (@PathVariable Long productNo) {
+        ProductDTO.Response response = productService.findProductByProductNo(productNo);
+        return ResponseEntity.ok().body(response);
     }
 
     @ApiOperation(value = "상품 리뷰 저장")
     @PostMapping("/review")
-    public Long saveProductComment(@RequestBody @Valid CommentDTO.Request commentRequestDTO) {
-        return productService.saveComment(commentRequestDTO);
+    public ResponseEntity<Long> saveProductComment(@RequestBody @Valid CommentDTO.Request commentRequestDTO) {
+        long resProductNo = productService.saveComment(commentRequestDTO);
+        return ResponseEntity.ok().body(resProductNo);
     }
 
     @ApiOperation(value = "상품 리뷰 변경")
     @PatchMapping("/review")
-    public Long updateProductComment(@RequestBody @Valid CommentDTO.Request commentRequestDTO) {
-        return productService.updateComment(commentRequestDTO);
+    public ResponseEntity<Long> updateProductComment(@RequestBody @Valid CommentDTO.Request commentRequestDTO) {
+        long resProductNo = productService.updateComment(commentRequestDTO);
+        return ResponseEntity.ok().body(resProductNo);
     }
 
     @ApiOperation(value = "상품 리뷰 삭제")
     @DeleteMapping("/review/{commentNo}")
-    public Long deleteProductComment(@PathVariable Long commentNo) {
-        return productService.deleteComment(commentNo);
+    public ResponseEntity<Long> deleteProductComment(@PathVariable Long commentNo) {
+        long resProductNo = productService.deleteComment(commentNo);
+        return ResponseEntity.ok().body(resProductNo);
     }
 
     @ApiOperation(value = "인기검색어 조회")
     @GetMapping("/searchRank")
-    public List<RankDTO.Response> SearchRankList(@RequestParam(value = "date", required = false)LocalDate date) {
-        return productService.searchRankList(date);
+    public ResponseEntity<List<RankDTO.Response>> SearchRankList(@RequestParam(value = "date", required = false)LocalDate date) {
+        List<RankDTO.Response> list = productService.searchRankList(date);
+        return ResponseEntity.ok().body(list);
     }
 
 /*    @ApiOperation(value = "리뷰 Like")

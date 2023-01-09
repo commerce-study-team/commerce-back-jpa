@@ -45,13 +45,14 @@ public class ProductPrice extends BaseEntity {
     private Product product;
 
     @Builder
-    public ProductPrice(LocalDateTime applyDate, Long salePrice, Long costPrice, Product product) {
+    public ProductPrice(LocalDateTime applyDate, Long salePrice, Long costPrice, Product product, Boolean useYn) {
 
         this.applyDate = applyDate;
         this.salePrice = salePrice;
         this.costPrice = costPrice;
         this.margin = salePrice - costPrice;
         this.product = product;
+        this.useYn = useYn;
     }
 
     public void settingProduct(Product product) {
